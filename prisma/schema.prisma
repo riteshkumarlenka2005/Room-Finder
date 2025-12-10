@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String
+  role     String  // 'student' or 'owner'
+  rooms    Room[]  @relation("UserRooms")
+}
+
+model Room {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  price       Int
+  image       String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  ownerId     Int
+  owner       User     @relation("UserRooms", fields: [ownerId], references: [id])
+}

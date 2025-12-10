@@ -1,0 +1,294 @@
+"use client";
+
+import { useState } from "react";
+import { PersonalInfoSection } from "@/components/helper/form-sections/personal-info-section";
+import { CookingSkillsSection } from "@/components/helper/form-sections/cooking-skills-section";
+import { HouseholdSkillsSection } from "@/components/helper/form-sections/household-skills-section";
+import { AvailabilitySection } from "@/components/helper/form-sections/availability-section";
+import { ContactInfoSection } from "@/components/helper/form-sections/contact-info-section";
+
+import { Button } from "@/components/ui/button";
+import { Loader2, Send } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
+
+// ------------------------------------------------------
+// FORM DATA INTERFACE
+// ------------------------------------------------------
+export interface HelperFormData {
+  fullName: string;
+  gender: string;
+  age: string;
+  city: string;
+  district: string;
+  state: string;
+  experience: string;
+  languages: string[];
+  bio: string;
+  profilePhoto: File | null;
+
+  cuisineType: string;
+  dishes: string[];
+  foodImages: File[];
+
+  cookingLevel: string;
+
+  houseCleaning: boolean;
+  childCare: boolean;
+  laundry: boolean;
+  elderlyCare: boolean;
+  petCare: boolean;
+  kitchenCleaning: boolean;
+  otherSkills: string;
+
+  workType: string;
+  salaryMin: string;
+  salaryMax: string;
+  workingHours: string[];
+  preferredWorkType: string[];
+  preferredEmployerGender: string;
+
+  phone: string;
+  alternatePhone: string;
+  whatsapp: string;
+  address: string;
+}
+
+
+// ------------------------------------------------------
+// INITIAL FORM DATA
+// ------------------------------------------------------
+const initialFormData: HelperFormData = {
+  fullName: "",
+  gender: "",
+  age: "",
+  city: "",
+  district: "",
+  state: "",
+  experience: "",
+  languages: [],
+  bio: "",
+  profilePhoto: null,
+
+  cuisineType: "",
+  dishes: [],
+  foodImages: [],
+  cookingLevel: "",
+
+  houseCleaning: false,
+  childCare: false,
+  laundry: false,
+  elderlyCare: false,
+  petCare: false,
+  kitchenCleaning: false,
+  otherSkills: "",
+
+  workType: "",
+  salaryMin: "",
+  salaryMax: "",
+  workingHours: [],
+  preferredWorkType: [],
+  preferredEmployerGender: "",
+
+  phone: "",
+  alternatePhone: "",
+  whatsapp: "",
+  address: "",
+};
+
+
+// ------------------------------------------------------
+// IMAGE UPLOAD FUNCTION (100% working)
+// ------------------------------------------------------
+async function uploadHelperImages(files: File[]) {
+  if (!files || files.length === 0) return [];
+
+  const uploaded: string[] = [];
+
+  for (const file of files) {
+    const fileName = `helper-${Date.now()}-${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from("helper-images")
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) {
+      console.error("Upload error:", error);
+      continue;
+    }
+
+    const publicURL = supabase.storage
+      .from("helper-images")
+      .getPublicUrl(fileName).data.publicUrl;
+
+    uploaded.push(publicURL);
+  }
+
+  return uploaded;
+}
+
+
+// ------------------------------------------------------
+// MAIN COMPONENT
+// ------------------------------------------------------
+export function DomesticHelperForm() {
+  const [formData, setFormData] = useState<HelperFormData>(initialFormData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const updateFormData = (updates: Partial<HelperFormData>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  };
+
+
+  // ------------------------------------------------------
+  //  SUBMIT HANDLER — FINAL WORKING
+  // ------------------------------------------------------
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // ------------------------------
+      // 1️⃣ Upload images to Supabase
+      // ------------------------------
+      const foodImageURLs = await uploadHelperImages(formData.foodImages);
+
+      // ------------------------------
+      // 2️⃣ Insert into Supabase DB
+      // ------------------------------
+      const { error } = await supabase.from("domestic_helpers").insert([
+        {
+          full_name: formData.fullName,
+          gender: formData.gender,
+          age: Number(formData.age),
+          experience_years: Number(formData.experience),
+
+          city: formData.city,
+          district: formData.district,
+          state: formData.state,
+          address: formData.address,
+
+          // skills
+          house_cleaning: formData.houseCleaning,
+          child_care: formData.childCare,
+          laundry: formData.laundry,
+          elderly_care: formData.elderlyCare,
+          pet_care: formData.petCare,
+          kitchen_cleaning: formData.kitchenCleaning,
+          other_skills: formData.otherSkills,
+
+          // cooking
+          cuisine_type: formData.cuisineType,
+          dishes: formData.dishes,          // jsonb[]
+          cooking_level: formData.cookingLevel,
+
+          // images
+          images: foodImageURLs,           // jsonb[]
+
+          // work preferences
+          salary_min: formData.salaryMin,
+          salary_max: formData.salaryMax,
+          work_type: formData.workType,
+          preferred_work_type: formData.preferredWorkType, // jsonb[]
+
+          // bio
+          bio: formData.bio,
+
+          // contact
+          phone: formData.phone,
+          alternate_phone: formData.alternatePhone,
+          whatsapp: formData.whatsapp,
+        },
+      ]);
+
+      if (error) throw error;
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while submitting!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+  // ------------------------------------------------------
+  // SUCCESS SCREEN
+  // ------------------------------------------------------
+  if (submitted) {
+    return (
+      <div className="text-center py-20">
+        <div className="mx-auto w-20 h-20 bg-green-100 text-green-600 flex items-center justify-center rounded-full mb-6">
+          <svg
+            className="w-12 h-12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+
+        <h1 className="text-3xl font-bold text-green-700 mb-2">
+          Congratulations!
+        </h1>
+
+        <p className="text-gray-600 mb-8">
+          Your helper listing has been submitted successfully.
+        </p>
+
+        <button
+          onClick={() => (window.location.href = "/")}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Go to Home Page
+        </button>
+      </div>
+    );
+  }
+
+
+  // ------------------------------------------------------
+  // MAIN FORM UI
+  // ------------------------------------------------------
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PersonalInfoSection formData={formData} updateFormData={updateFormData} />
+      <CookingSkillsSection formData={formData} updateFormData={updateFormData} />
+      <HouseholdSkillsSection formData={formData} updateFormData={updateFormData} />
+      <AvailabilitySection formData={formData} updateFormData={updateFormData} />
+      <ContactInfoSection formData={formData} updateFormData={updateFormData} />
+
+      {/* Submit Button */}
+      <div className="bg-card rounded-lg border border-border shadow-sm p-6">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full h-12 bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold text-base shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-70"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            <>
+              <Send className="mr-2 h-5 w-5" />
+              Submit Your Profile
+            </>
+          )}
+        </Button>
+
+        <p className="text-center text-sm text-muted-foreground mt-3">
+          By submitting, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
+    </form>
+  );
+}

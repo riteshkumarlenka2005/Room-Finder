@@ -1,0 +1,20 @@
+import { supabase } from "@/lib/supabase";
+
+export async function requireAuth() {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Not logged in
+  if (!user) {
+    window.location.href = "/login";
+    return false;
+  }
+
+  // Email not verified
+  if (!user.email_confirmed_at) {
+    alert("Please verify your email before listing a property.");
+    window.location.href = "/verify-email";
+    return false;
+  }
+
+  return true;
+}
