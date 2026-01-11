@@ -27,6 +27,8 @@ import {
   Droplets,
   Wind,
   Filter,
+  Zap,
+  Car
 } from "lucide-react";
 import {
   Sheet,
@@ -142,6 +144,8 @@ export default function SearchPage() {
           doors: r.doors ?? 0,
           windows: r.windows ?? 0,
           waterSystem: r.water_system ?? "",
+          electricity: r.electricity ?? "",
+          parking: r.parking ?? "",
         },
 
         created_at: r.created_at ?? 0,
@@ -434,11 +438,13 @@ export default function SearchPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
-                        <div className="flex items-center gap-1"><Bed className="w-4 h-4 text-gray-500" /><span>{room.details?.bhk}</span></div>
-                        <div className="flex items-center gap-1"><Square className="w-4 h-4 text-gray-500" /><span>{room.details?.doors} Doors</span></div>
-                        <div className="flex items-center gap-1"><Wind className="w-4 h-4 text-gray-500" /><span>{room.details?.windows} Windows</span></div>
-                        <div className="flex items-center gap-1"><Droplets className="w-4 h-4 text-gray-500" /><span>{room.details?.waterSystem}</span></div>
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-4 text-[13px] bg-gray-50/50 p-3 rounded-xl">
+                        <div className="flex items-center gap-2"><Bed className="w-4 h-4 text-blue-500/70" /><span>{room.details?.bhk || "—"}</span></div>
+                        <div className="flex items-center gap-2"><Square className="w-4 h-4 text-orange-500/70" /><span>{room.details?.doors} Doors</span></div>
+                        <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-cyan-500/70" /><span>{room.details?.windows} Win.</span></div>
+                        <div className="flex items-center gap-2"><Droplets className="w-4 h-4 text-blue-400" /><span>{room.details?.waterSystem || "—"}</span></div>
+                        <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-yellow-500/70" /><span>{room.details?.electricity || "—"}</span></div>
+                        <div className="flex items-center gap-2"><Car className="w-4 h-4 text-emerald-500/70" /><span>{room.details?.parking || "—"}</span></div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, MapPin, Home, Users, Star, Phone, Utensils, Shield, CheckCircle, Heart, Bed, Square, Wind, Droplets } from "lucide-react"
+import { Search, MapPin, Home, Users, Star, Phone, Utensils, Shield, CheckCircle, Heart, Bed, Square, Wind, Droplets, Zap, Car } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { resolveImageUrl } from "@/utils/image-utils"
@@ -246,22 +246,30 @@ export default function HomePage() {
                       </div>
 
                       {/* Detail Icons — ADDED FOR CONSISTENCY */}
-                      <div className="grid grid-cols-4 gap-2 mb-4 p-2 bg-gray-50 rounded-lg text-[10px] text-gray-600">
+                      <div className="grid grid-cols-3 gap-2 mb-4 p-2 bg-gray-50 rounded-lg text-[9px] text-gray-600">
                         <div className="flex flex-col items-center gap-1">
-                          <Bed className="w-3.5 h-3.5 text-gray-400" />
+                          <Bed className="w-3 h-3 text-gray-400" />
                           <span className="truncate">{room.bhk || "—"}</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
-                          <Square className="w-3.5 h-3.5 text-gray-400" />
+                          <Square className="w-3 h-3 text-gray-400" />
                           <span className="truncate">{room.doors || 0} Doors</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
-                          <Wind className="w-3.5 h-3.5 text-gray-400" />
+                          <Wind className="w-3 h-3 text-gray-400" />
                           <span className="truncate">{room.windows || 0} Win.</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
-                          <Droplets className="w-3.5 h-3.5 text-gray-400" />
+                          <Droplets className="w-3 h-3 text-gray-400" />
                           <span className="truncate">{room.water_system || "—"}</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Zap className="w-3 h-3 text-gray-400" />
+                          <span className="truncate">{room.electricity || "—"}</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Car className="w-3 h-3 text-gray-400" />
+                          <span className="truncate">{room.parking || "—"}</span>
                         </div>
                       </div>
 

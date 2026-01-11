@@ -81,6 +81,8 @@ export async function GET() {
       doors: p.doors ?? 0,
       windows: p.windows ?? 0,
       water_system: p.water_system ?? "",
+      electricity: p.electricity ?? "",
+      parking: p.parking ?? "",
       images: Array.isArray(p.images)
         ? p.images
         : p.images
