@@ -26,6 +26,7 @@ import {
 
 import Link from "next/link"
 import Image from "next/image"
+import { resolveImageUrl } from "@/utils/image-utils"
 
 interface Filters {
   priceRange: string
@@ -86,34 +87,7 @@ export default function MaushiServicesPage() {
     return null
   }
 
-  const resolveImageUrl = (path: any) => {
-    if (!path) return "/placeholder.svg"
-
-    if (Array.isArray(path)) {
-      if (path.length === 0) return "/placeholder.svg"
-      return resolveImageUrl(path[0])
-    }
-
-    if (typeof path === "object" && path !== null) {
-      const maybe = (path.publicUrl ?? path.url ?? path.path ?? path.file ?? null)
-      if (maybe) return resolveImageUrl(maybe)
-      return "/placeholder.svg"
-    }
-
-    if (typeof path !== "string") return "/placeholder.svg"
-    const s = path.trim()
-    if (!s) return "/placeholder.svg"
-    if (s.startsWith("http://") || s.startsWith("https://")) return s
-
-    try {
-      const res: any = supabase.storage.from("helper-images").getPublicUrl(s)
-      const publicUrl = res?.data?.publicUrl ?? res?.publicURL ?? res?.publicUrl ?? null
-      if (publicUrl) return publicUrl
-    } catch { /* ignore */ }
-
-    // fallback raw path
-    return s.includes("/") ? s : s
-  }
+  // REMOVED local resolveImageUrl in favor of central utility
 
   // ----------------------------
   // FETCH HELPERS FROM SUPABASE
@@ -147,9 +121,9 @@ export default function MaushiServicesPage() {
 
       const profilePhoto = h.profile_photo ?? h.profilePhoto ?? h.photo ?? null
 
-      const images = parsedImages.map(resolveImageUrl)
-      const food_images = parsedFood.map(resolveImageUrl)
-      const profile_photo = profilePhoto ? resolveImageUrl(profilePhoto) : null
+      const images = parsedImages.map((p: any) => resolveImageUrl(p, "helper-images"))
+      const food_images = parsedFood.map((p: any) => resolveImageUrl(p, "helper-images"))
+      const profile_photo = resolveImageUrl(profilePhoto, "helper-images")
 
       const anyImages = [...food_images, ...images, ...(profile_photo ? [profile_photo] : [])].filter(Boolean)
       const mainImage = anyImages.length ? anyImages[0] : "/placeholder.svg"

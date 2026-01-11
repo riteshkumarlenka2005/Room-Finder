@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Search, MapPin, Home, Users, Star, Phone, Utensils, Shield, CheckCircle, Heart } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { resolveImageUrl } from "@/utils/image-utils"
 import Navbar from "@/components/navbar"
 import { useRouter } from "next/navigation";
 
@@ -191,7 +192,7 @@ export default function HomePage() {
               {featuredRooms.map((room) => {
                 const roomId = room.property_id || room.id
                 const images = Array.isArray(room.images) ? room.images : []
-                const firstImage = images.length ? images[0] : "/placeholder.svg"
+                const firstImage = resolveImageUrl(images.length ? images[0] : null)
 
                 return (
                   <Card key={roomId} className="overflow-hidden hover:shadow-lg transition-shadow">

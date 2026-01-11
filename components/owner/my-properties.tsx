@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
+import { resolveImageUrl } from "@/utils/image-utils";
 
 import {
   Search,
@@ -113,10 +114,12 @@ export default function MyProperties() {
         views: p.views ?? 0,
         status: p.status ?? "available", // REAL STATUS
         verified: p.verified ?? true,
-        image:
+        image: resolveImageUrl(
           p.room_image_url ||
           (Array.isArray(p.images) && p.images[0]) ||
-          "/placeholder.svg",
+          p.image ||
+          null
+        ),
       }));
 
       setProperties(normalized);

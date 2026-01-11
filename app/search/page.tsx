@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/navbar"
 
 
+import { resolveImageUrl } from "@/utils/image-utils";
 import {
   Search,
   MapPin,
@@ -116,7 +117,7 @@ export default function SearchPage() {
         sharing: r.sharing ?? "",
 
         features: normalizeArray(r.amenities),
-        image: Array.isArray(r.images) ? r.images[0] : "/placeholder.svg",
+        image: resolveImageUrl(Array.isArray(r.images) ? r.images[0] : (r.image || null)),
 
         rating: Number(r.rating ?? 0),
         reviews: Number(r.reviews ?? 0),

@@ -44,6 +44,8 @@ import {
 
 import Link from "next/link"
 import Image from "next/image"
+import { resolveImageUrl } from "@/utils/image-utils"
+import { cn } from "@/lib/utils";
 
 
 export default function RoomDetailsPage({ params }: { params: { id: string } | any }) {
@@ -289,7 +291,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
 
                 {/* Main Image */}
                 <Image
-                  src={property.images[currentImageIndex] || "/placeholder.svg"}
+                  src={resolveImageUrl(property.images[currentImageIndex])}
                   alt={property.title}
                   fill
                   className="object-cover transition-all duration-300"
@@ -312,7 +314,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
                 <button
                   onClick={() =>
                     setCurrentImageIndex((prev) =>
-                      prev === property.images.length - 1 ? 0 : prev + 1
+                      (property.images && prev === property.images.length - 1) ? 0 : prev + 1
                     )
                   }
                   className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
@@ -322,7 +324,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
 
                 {/* Dots Indicators */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                  {property.images.map((_: any, index: number) => (
+                  {property.images && property.images.map((_: any, index: number) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
