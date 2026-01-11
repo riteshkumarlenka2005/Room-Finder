@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, MapPin, Home, Users, Star, Phone, Utensils, Shield, CheckCircle, Heart } from "lucide-react"
+import { Search, MapPin, Home, Users, Star, Phone, Utensils, Shield, CheckCircle, Heart, Bed, Square, Wind, Droplets } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { resolveImageUrl } from "@/utils/image-utils"
@@ -219,57 +219,81 @@ export default function HomePage() {
 
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-lg">{room.title}</h3>
-                        <span className="text-lg font-bold text-blue-600">{room.price}</span>
+                        <h3 className="font-semibold text-lg truncate pr-2">{room.title}</h3>
+                        <span className="text-lg font-bold text-blue-600">₹{room.price}</span>
                       </div>
 
-                      <div className="flex items-center text-gray-600 mb-2">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        <span className="text-sm">{room.location}</span>
+                      <div className="flex items-center text-gray-600 mb-3">
+                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                        <span className="text-xs truncate">{room.location}</span>
                       </div>
 
-                      <div className="flex items-center gap-4 mb-3">
-                        <Badge variant="outline">{room.type}</Badge>
-                        <Badge variant="outline">{room.sharing}</Badge>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Badge variant="outline" className="flex items-center gap-1 text-[10px]">
+                          <Home className="w-3 h-3" />
+                          {room.type}
+                        </Badge>
+                        {room.sharing && (
+                          <Badge variant="outline" className="flex items-center gap-1 text-[10px]">
+                            <Users className="w-3 h-3" />
+                            {room.sharing}
+                          </Badge>
+                        )}
+                        <div className="flex items-center ml-auto">
+                          <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                          <span className="ml-1 text-[10px] font-medium">{room.rating}</span>
+                        </div>
                       </div>
 
-                      <div className="flex items-center mb-3">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="ml-1 text-sm font-medium">{room.rating}</span>
-                        <span className="ml-1 text-sm text-gray-500">
-                          ({room.reviews} reviews)
-                        </span>
+                      {/* Detail Icons — ADDED FOR CONSISTENCY */}
+                      <div className="grid grid-cols-4 gap-2 mb-4 p-2 bg-gray-50 rounded-lg text-[10px] text-gray-600">
+                        <div className="flex flex-col items-center gap-1">
+                          <Bed className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="truncate">{room.bhk || "—"}</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Square className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="truncate">{room.doors || 0} Doors</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Wind className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="truncate">{room.windows || 0} Win.</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Droplets className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="truncate">{room.water_system || "—"}</span>
+                        </div>
                       </div>
 
                       <div className="flex flex-wrap gap-1 mb-4">
                         {(Array.isArray(room.features) ? room.features : [])
-                          .slice(0, 3)
+                          .slice(0, 2)
                           .map((feature: any, index: number) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
+                            <Badge key={index} variant="secondary" className="text-[10px] px-1.5 py-0">
                               {feature?.name ?? feature}
                             </Badge>
                           ))}
 
-                        {Array.isArray(room.features) && room.features.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{room.features.length - 3} more
+                        {Array.isArray(room.features) && room.features.length > 2 && (
+                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                            +{room.features.length - 2} more
                           </Badge>
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Users className="w-4 h-4 mr-1" />
-                          <span>{room.owner}</span>
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Users className="w-3.5 h-3.5 mr-1" />
+                          <span className="truncate max-w-[80px]">{room.owner}</span>
                         </div>
 
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <Phone className="w-4 h-4" />
+                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                            <Phone className="w-3.5 h-3.5" />
                           </Button>
 
                           <Link href={`/room/${roomId}`}>
-                            <Button size="sm">View Details</Button>
+                            <Button size="sm" className="h-8 px-3 text-xs">View Details</Button>
                           </Link>
                         </div>
                       </div>

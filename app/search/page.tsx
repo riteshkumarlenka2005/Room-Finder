@@ -118,17 +118,17 @@ export default function SearchPage() {
         id: r.id,
         title: r.title ?? "Untitled Room",
 
-        fullAddress: r.full_address ?? "",
-        location: `${r.city ?? ""}, ${r.district ?? ""}, ${r.state ?? ""}`,
+        fullAddress: r.full_address ?? r.address ?? "",
+        location: r.location || `${r.city ?? ""}, ${r.district ?? ""}, ${r.state ?? ""}`,
 
         price: Number(r.price ?? r.monthly_rent ?? 0),
-        type: r.property_type ?? "",
-        sharing: r.sharing ?? "",
+        type: r.property_type || (r.bhk ? (String(r.bhk).toUpperCase().includes("BHK") ? r.bhk : `${r.bhk}BHK`) : "Room"),
+        sharing: r.sharing || "",
 
         features: normalizeArray(r.amenities),
-        image: resolveImageUrl(Array.isArray(r.images) ? r.images[0] : (r.image || null)),
+        image: resolveImageUrl(Array.isArray(r.images) && r.images.length ? r.images[0] : (r.image || null)),
 
-        rating: Number(r.rating ?? 0),
+        rating: Number(r.rating ?? 4.5),
         reviews: Number(r.reviews ?? 0),
 
         owner: {
@@ -424,7 +424,9 @@ export default function SearchPage() {
 
                       <div className="flex items-center gap-4 mb-4">
                         <Badge variant="outline" className="flex items-center gap-1"><Home className="w-3 h-3" />{room.type}</Badge>
-                        <Badge variant="outline" className="flex items-center gap-1"><Users className="w-3 h-3" />{room.sharing}</Badge>
+                        {room.sharing && (
+                          <Badge variant="outline" className="flex items-center gap-1"><Users className="w-3 h-3" />{room.sharing}</Badge>
+                        )}
                         <div className="flex items-center">
                           <Star className="w-4 h-4 text-yellow-400 fill-current" />
                           <span className="ml-1 text-sm font-medium">{room.rating}</span>

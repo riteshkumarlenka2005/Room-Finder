@@ -37,12 +37,12 @@ export async function GET() {
           set(name: string, value: string, options: any) {
             try {
               cookieStore.set({ name, value, ...options });
-            } catch {}
+            } catch { }
           },
           remove(name: string, options: any) {
             try {
               cookieStore.set({ name, value: "", maxAge: 0, ...options });
-            } catch {}
+            } catch { }
           },
         },
       }
@@ -64,10 +64,12 @@ export async function GET() {
       title: p.title ?? "",
       price: p.price ?? p.monthly_rent ?? "",
       location: p.full_address ?? p.city ?? "",
-      type: p.bhk ? `${p.bhk}BHK` : "Room",
-      sharing: Array.isArray(p.preferred_tenants)
+      type: p.bhk
+        ? (String(p.bhk).toUpperCase().includes("BHK") ? p.bhk : `${p.bhk}BHK`)
+        : "Room",
+      sharing: p.sharing || (Array.isArray(p.preferred_tenants)
         ? p.preferred_tenants.join(", ")
-        : "",
+        : ""),
       owner: p.owner_name ?? "",
       rating: 4.5, // fallback (no rating column in DB)
       reviews: p.reviews ?? 0,
@@ -75,11 +77,15 @@ export async function GET() {
         ...(p.amenities || []),
         ...(p.furniture || []),
       ],
+      bhk: p.bhk ?? "",
+      doors: p.doors ?? 0,
+      windows: p.windows ?? 0,
+      water_system: p.water_system ?? "",
       images: Array.isArray(p.images)
         ? p.images
         : p.images
-        ? [p.images]
-        : [],
+          ? [p.images]
+          : [],
       verified: true,
       property_id: p.id,
     }));
@@ -110,12 +116,12 @@ export async function POST(req: Request) {
           set(name: string, value: string, options: any) {
             try {
               cookieStore.set({ name, value, ...options });
-            } catch {}
+            } catch { }
           },
           remove(name: string, options: any) {
             try {
               cookieStore.set({ name, value: "", maxAge: 0, ...options });
-            } catch {}
+            } catch { }
           },
         },
       }
@@ -125,26 +131,26 @@ export async function POST(req: Request) {
 
     // ✅ Read real authenticated user
     const authHeader = req.headers.get("authorization");
-const token = authHeader?.replace("Bearer ", "");
+    const token = authHeader?.replace("Bearer ", "");
 
-if (!token) {
-  return NextResponse.json(
-    { error: "No token provided" },
-    { status: 401 }
-  );
-}
+    if (!token) {
+      return NextResponse.json(
+        { error: "No token provided" },
+        { status: 401 }
+      );
+    }
 
-const {
-  data: { user },
-  error: userError,
-} = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
 
-if (userError || !user) {
-  return NextResponse.json(
-    { error: "Invalid token" },
-    { status: 401 }
-  );
-}
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: "Invalid token" },
+        { status: 401 }
+      );
+    }
 
     const payload: any = {
       title: body.title,
