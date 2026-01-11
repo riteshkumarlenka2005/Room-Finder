@@ -25,6 +25,7 @@ import {
 } from "lucide-react"
 
 import Link from "next/link"
+import Image from "next/image"
 
 interface Filters {
   priceRange: string
@@ -203,9 +204,9 @@ export default function MaushiServicesPage() {
         city: h.city ?? h.location ?? h.area ?? "",
         district: h.district ?? "",
         salaryMin:
-  h.salary_min !== null && h.salary_min !== undefined
-    ? Number(h.salary_min)
-    : "",
+          h.salary_min !== null && h.salary_min !== undefined
+            ? Number(h.salary_min)
+            : "",
 
         experience_years: h.experience_years ?? h.experience ?? h.years ?? "",
         other_skills,
@@ -449,11 +450,14 @@ export default function MaushiServicesPage() {
                     <div className="md:flex">
                       <div className="md:w-1/4 relative">
                         {/* IMAGE FIX — Auto-load food_images → images → profile_photo → fallback */}
-                        <img
-                          src={h._getMainImageUrl ? h._getMainImageUrl() : "/placeholder.svg"}
-                          alt={h.full_name}
-                          className="w-full h-64 md:h-full object-cover"
-                        />
+                        <div className="relative w-full h-64 md:h-full">
+                          <Image
+                            src={h._getMainImageUrl ? h._getMainImageUrl() : "/placeholder.svg"}
+                            alt={h.full_name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
 
                         <Badge className="absolute top-2 left-2 bg-green-600">
                           <CheckCircle className="w-3 h-3 mr-1" />

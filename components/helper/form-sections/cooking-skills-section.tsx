@@ -1,6 +1,6 @@
 "use client"
 
-import { ChefHat, Utensils, Image, Award } from "lucide-react"
+import { ChefHat, Utensils, Image as ImageIcon, Award } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FormSectionCard } from "@/components/helper/form-section-card"
@@ -92,8 +92,7 @@ export function CookingSkillsSection({ formData, updateFormData }: CookingSkills
         {/* Food Images */}
         <div className="space-y-2 md:col-span-2">
           <Label className="text-sm font-medium text-foreground flex items-center gap-2">
-            <Image className="h-4 w-4 text-muted-foreground" />
-
+            <ImageIcon className="h-4 w-4 text-muted-foreground" />
             Food Images (Showcase your cooking)
           </Label>
           <ImageUpload

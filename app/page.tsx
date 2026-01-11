@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Search, MapPin, Home, Users, Star, Phone, Utensils, Shield, CheckCircle, Heart } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import Navbar from "@/components/navbar"
 import { useRouter } from "next/navigation";
 
@@ -95,40 +96,40 @@ export default function HomePage() {
                 </div>
 
                 {/* PRICE RANGE */}
-<div className="relative">
-  <span className="absolute left-3 top-3 text-gray-400">₹</span>
-  <select
-    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    value={priceRange}
-    onChange={(e) => setPriceRange(e.target.value)}
-  >
-    <option value="">Price Range</option>
+                <div className="relative">
+                  <span className="absolute left-3 top-3 text-gray-400">₹</span>
+                  <select
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={priceRange}
+                    onChange={(e) => setPriceRange(e.target.value)}
+                  >
+                    <option value="">Price Range</option>
 
-    {/* Correct price values that match /search filters */}
-    <option value="0-2000">Under ₹2000</option>
-    <option value="2000-4000">₹2000-₹4000</option>
-    <option value="4000-6000">₹4000-₹6000</option>
-    <option value="6000-999999">Above ₹6000</option>
-  </select>
-</div>
+                    {/* Correct price values that match /search filters */}
+                    <option value="0-2000">Under ₹2000</option>
+                    <option value="2000-4000">₹2000-₹4000</option>
+                    <option value="4000-6000">₹4000-₹6000</option>
+                    <option value="6000-999999">Above ₹6000</option>
+                  </select>
+                </div>
 
                 {/* SEARCH BUTTON */}
                 <Link
-  href={`/search?location=${encodeURIComponent(searchLocation)}&type=${encodeURIComponent(roomType)}&price=${encodeURIComponent(priceRange)}`}
-  className="w-full"
->
-  <Button className="w-full">
-    <Search className="w-4 h-4 mr-2" />
-    Search Rooms
-  </Button>
-</Link>
+                  href={`/search?location=${encodeURIComponent(searchLocation)}&type=${encodeURIComponent(roomType)}&price=${encodeURIComponent(priceRange)}`}
+                  className="w-full"
+                >
+                  <Button className="w-full">
+                    <Search className="w-4 h-4 mr-2" />
+                    Search Rooms
+                  </Button>
+                </Link>
 
 
 
               </div>
             </div>
 
-          {/* ❗❗ FIX: CLOSE HERO SECTION PROPERLY ❗❗ */}
+            {/* ❗❗ FIX: CLOSE HERO SECTION PROPERLY ❗❗ */}
           </div>
         </section>
 
@@ -195,7 +196,13 @@ export default function HomePage() {
                 return (
                   <Card key={roomId} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative">
-                      <img src={firstImage} alt="" className="w-full h-48 object-cover" />
+                      <Image
+                        src={firstImage}
+                        alt=""
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
 
                       <Button size="sm" variant="outline" className="absolute top-2 right-2 bg-white/90 hover:bg-white">
                         <Heart className="w-4 h-4" />

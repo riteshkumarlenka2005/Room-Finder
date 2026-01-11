@@ -25,77 +25,77 @@ export default function LoginPage() {
   const router = useRouter()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-  setError(""); // Clear error when user types
-};
+    setError(""); // Clear error when user types
+  };
 
 
-// inside app/login/page.tsx, replace the existing handleSubmit with this:
+  // inside app/login/page.tsx, replace the existing handleSubmit with this:
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError("");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-  const { email, password } = formData;
+    const { email, password } = formData;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    setError(error.message);
-    setIsLoading(false);
-    return;
-  }
+    if (error) {
+      setError(error.message);
+      setIsLoading(false);
+      return;
+    }
 
-  
-  window.location.href = "/search"; // or "/" if you prefer home
-};
+
+    window.location.href = "/search"; // or "/" if you prefer home
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
-<div className="mb-8">
-  <div className="relative flex items-center justify-center mb-4">
+        <div className="mb-8">
+          <div className="relative flex items-center justify-center mb-4">
 
-    {/* ✅ Back Button — FIXED LEFT */}
-    <Button
-      type="button"
-      variant="outline"
-      onClick={() => router.back()}
-      className="absolute left-0"
-    >
-      ← Back
-    </Button>
+            {/* ✅ Back Button — FIXED LEFT */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              className="absolute left-0"
+            >
+              ← Back
+            </Button>
 
-    {/* ✅ Home Logo — CENTERED */}
-    <Link href="/" className="inline-flex items-center">
-      <Home className="h-8 w-8 text-blue-600" />
-      <span className="ml-2 text-2xl font-bold text-gray-900">
-        RoomFinder
-      </span>
-    </Link>
-  </div>
+            {/* ✅ Home Logo — CENTERED */}
+            <Link href="/" className="inline-flex items-center">
+              <Home className="h-8 w-8 text-blue-600" />
+              <span className="ml-2 text-2xl font-bold text-gray-900">
+                RoomFinder
+              </span>
+            </Link>
+          </div>
 
-  <h1 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-    Welcome Back
-  </h1>
-  <p className="text-gray-600 text-center">
-    Sign in to your account
-  </p>
-</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+            Welcome Back
+          </h1>
+          <p className="text-gray-600 text-center">
+            Sign in to your account
+          </p>
+        </div>
 
 
-        
+
 
 
         <Card>
@@ -188,7 +188,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             {/* Signup Link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/signup" className="text-blue-600 hover:underline font-medium">
                   Sign up
                 </Link>

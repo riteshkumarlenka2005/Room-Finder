@@ -27,6 +27,7 @@ import {
   Wind,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Filters {
   priceRange: string;
@@ -89,7 +90,7 @@ export default function SearchPage() {
     }));
 
     if (qLocation) setSearchQuery(qLocation);
-  }, []);
+  }, [searchParams]);
 
   // ----------------------------------------
   // FETCH FROM SUPABASE
@@ -337,25 +338,25 @@ export default function SearchPage() {
               </div>
 
               {/* AMENITIES */}
-<div className="mb-6">
-  <h4 className="font-medium mb-3">Amenities</h4>
-  <div className="space-y-2">
-    {amenitiesList.map((amenity) => (
-      <div key={amenity} className="flex items-center space-x-2">
-        <Checkbox
-          id={`amenity-${amenity}`}
-          checked={selectedFilters.amenities.includes(amenity)}
-          onCheckedChange={(checked) =>
-            handleFilterChange("amenities", amenity, checked)
-          }
-        />
-        <label htmlFor={`amenity-${amenity}`} className="text-sm">
-          {amenity}
-        </label>
-      </div>
-    ))}
-  </div>
-</div>
+              <div className="mb-6">
+                <h4 className="font-medium mb-3">Amenities</h4>
+                <div className="space-y-2">
+                  {amenitiesList.map((amenity) => (
+                    <div key={amenity} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`amenity-${amenity}`}
+                        checked={selectedFilters.amenities.includes(amenity)}
+                        onCheckedChange={(checked) =>
+                          handleFilterChange("amenities", amenity, checked)
+                        }
+                      />
+                      <label htmlFor={`amenity-${amenity}`} className="text-sm">
+                        {amenity}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
 
               <Button variant="outline" className="w-full bg-transparent" onClick={() => setSelectedFilters({
@@ -385,7 +386,15 @@ export default function SearchPage() {
                 <Card key={room.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="md:flex">
                     <div className="md:w-1/3 relative">
-                      <img src={room.image || "/placeholder.svg"} alt={room.title} className="w-full h-64 md:h-full object-cover" />
+                      <div className="relative w-full h-64 md:h-full">
+                        <Image
+                          src={room.image || "/placeholder.svg"}
+                          alt={room.title}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
                       <Button size="sm" variant="outline" className="absolute top-2 right-2 bg-white/90 hover:bg-white">
                         <Heart className="w-4 h-4" />
                       </Button>

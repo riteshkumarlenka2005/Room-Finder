@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -86,31 +87,31 @@ export default function HelperDetailsPage() {
 
   const router = useRouter();
 
-useEffect(() => {
-  const checkAuthAndRole = async () => {
-    const { data } = await supabase.auth.getUser();
-    const user = data.user;
+  useEffect(() => {
+    const checkAuthAndRole = async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
 
-    // ❌ Not logged in → go to login
-    if (!user) {
-      router.replace("/login?redirect=/maushi-services");
-      return;
-    }
+      // ❌ Not logged in → go to login
+      if (!user) {
+        router.replace("/login?redirect=/maushi-services");
+        return;
+      }
 
-    const role = user.user_metadata?.role;
+      const role = user.user_metadata?.role;
 
-    // ❌ Helpers should not view other helpers
-    if (role === "maushi" || role === "helper") {
-      alert("❌ Helpers are not allowed to view other helper profiles.");
-      router.replace("/");
-      return;
-    }
+      // ❌ Helpers should not view other helpers
+      if (role === "maushi" || role === "helper") {
+        alert("❌ Helpers are not allowed to view other helper profiles.");
+        router.replace("/");
+        return;
+      }
 
-    // ✅ Student & Owner allowed
-  };
+      // ✅ Student & Owner allowed
+    };
 
-  checkAuthAndRole();
-}, []);
+    checkAuthAndRole();
+  }, [router]);
 
 
   // ----------------------------------------
@@ -127,7 +128,7 @@ useEffect(() => {
         .select("*")
         .eq("id", id)
         .single()
-        
+
         ;
 
       if (error || !data) {
@@ -196,9 +197,9 @@ useEffect(() => {
 
         experience: data.experience_years ?? data.experience ?? "0",
         salary:
-  data.salary_min !== null && data.salary_min !== undefined
-    ? Number(data.salary_min)
-    : "Negotiable",
+          data.salary_min !== null && data.salary_min !== undefined
+            ? Number(data.salary_min)
+            : "Negotiable",
 
         phone,
         alternate_phone,
@@ -229,9 +230,7 @@ useEffect(() => {
     };
 
     fetchHelper();
-    return () => {
-      mounted = false;
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!helper) {
@@ -291,10 +290,12 @@ useEffect(() => {
             {/* Image Carousel */}
             <Card className="overflow-hidden">
               <div className="relative w-full h-96 bg-gray-200 rounded-xl overflow-hidden">
-                <img
+                <Image
                   src={images[currentImageIndex]}
                   alt={helper.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
 
                 {/* Prev */}
@@ -329,9 +330,8 @@ useEffect(() => {
                     <button
                       key={idx}
                       onClick={() => setCurrentImageIndex(idx)}
-                      className={`w-3 h-3 rounded-full ${
-                        currentImageIndex === idx ? "bg-white" : "bg-white/50"
-                      }`}
+                      className={`w-3 h-3 rounded-full ${currentImageIndex === idx ? "bg-white" : "bg-white/50"
+                        }`}
                     />
                   ))}
                 </div>

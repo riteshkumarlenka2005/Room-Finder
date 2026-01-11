@@ -61,7 +61,7 @@ export function Analytics() {
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">Performance Overview</h2>
-          <p className="text-sm text-muted-foreground">Track your properties' performance over time</p>
+          <p className="text-sm text-muted-foreground">Track your properties&apos; performance over time</p>
         </div>
         <Tabs defaultValue="6m">
           <TabsList>
@@ -116,9 +116,8 @@ export function Analytics() {
                   <p className="text-sm text-muted-foreground">{metric.title}</p>
                   <p className="text-2xl font-bold">{metric.value}</p>
                   <div
-                    className={`flex items-center gap-1 text-sm ${
-                      metric.trend === "up" ? "text-green-600" : "text-red-600"
-                    }`}
+                    className={`flex items-center gap-1 text-sm ${metric.trend === "up" ? "text-green-600" : "text-red-600"
+                      }`}
                   >
                     {metric.trend === "up" ? (
                       <ArrowUpRight className="h-4 w-4" />
@@ -129,26 +128,24 @@ export function Analytics() {
                   </div>
                 </div>
                 <div
-                  className={`p-3 rounded-xl ${
-                    metric.color === "blue"
+                  className={`p-3 rounded-xl ${metric.color === "blue"
                       ? "bg-blue-100"
                       : metric.color === "green"
                         ? "bg-green-100"
                         : metric.color === "purple"
                           ? "bg-purple-100"
                           : "bg-orange-100"
-                  }`}
+                    }`}
                 >
                   <metric.icon
-                    className={`h-5 w-5 ${
-                      metric.color === "blue"
+                    className={`h-5 w-5 ${metric.color === "blue"
                         ? "text-blue-600"
                         : metric.color === "green"
                           ? "text-green-600"
                           : metric.color === "purple"
                             ? "text-purple-600"
                             : "text-orange-600"
-                    }`}
+                      }`}
                   />
                 </div>
               </div>

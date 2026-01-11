@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function UploadTest() {
   const [url, setUrl] = useState("");
@@ -39,7 +40,7 @@ export default function UploadTest() {
       {url && (
         <div>
           <p>Uploaded Image URL:</p>
-          <img src={url} width={200} />
+          <Image src={url} width={200} height={200} alt="Uploaded file" />
           <p>{url}</p>
         </div>
       )}

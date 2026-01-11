@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import Image from "next/image";
 
 import {
   Search,
@@ -275,20 +276,23 @@ export default function MyProperties() {
               className="border-0 shadow-sm overflow-hidden group"
             >
               <div className="relative">
-                <img
-                  src={property.image}
-                  alt={property.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                <div className="relative w-full h-48">
+                  <Image
+                    src={property.image}
+                    alt={property.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                  />
+                </div>
 
                 <Badge
-                  className={`absolute top-3 left-3 ${
-                    property.status === "available"
-                      ? "bg-green-500"
-                      : property.status === "occupied"
+                  className={`absolute top-3 left-3 ${property.status === "available"
+                    ? "bg-green-500"
+                    : property.status === "occupied"
                       ? "bg-blue-500"
                       : "bg-orange-500"
-                  } text-white`}
+                    } text-white`}
                 >
                   {property.status}
                 </Badge>
@@ -360,11 +364,15 @@ export default function MyProperties() {
             <Card key={property.id} className="border-0 shadow-sm">
               <CardContent className="p-4">
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <img
-                    src={property.image}
-                    alt={property.title}
-                    className="w-full sm:w-48 h-32 object-cover rounded-lg"
-                  />
+                  <div className="relative w-full sm:w-48 h-32 flex-shrink-0">
+                    <Image
+                      src={property.image}
+                      alt={property.title}
+                      fill
+                      className="object-cover rounded-lg"
+                      unoptimized
+                    />
+                  </div>
 
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
@@ -374,13 +382,12 @@ export default function MyProperties() {
                             {property.title}
                           </h3>
                           <Badge
-                            className={`${
-                              property.status === "available"
-                                ? "bg-green-100 text-green-700"
-                                : property.status === "occupied"
+                            className={`${property.status === "available"
+                              ? "bg-green-100 text-green-700"
+                              : property.status === "occupied"
                                 ? "bg-blue-100 text-blue-700"
                                 : "bg-orange-100 text-orange-700"
-                            }`}
+                              }`}
                           >
                             {property.status}
                           </Badge>

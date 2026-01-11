@@ -43,31 +43,32 @@ import {
 } from "lucide-react";
 
 import Link from "next/link"
+import Image from "next/image"
 
 
 export default function RoomDetailsPage({ params }: { params: { id: string } | any }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactForm, setShowContactForm] = useState(false);
   const [property, setProperty] = useState<any>(null);
-    
+
   const router = useRouter();
   const [authChecked, setAuthChecked] = useState(false);
 
 
   const amenityIcons: Record<string, any> = {
-  WiFi: Wifi,
-  AC: Snowflake,
-  TV: Tv,
-  CCTV: Cctv,
-  Gym: Dumbbell,
-  Garden: TreePalm,
-  "Security Guard": ShieldCheck,
-  "Power Backup": Zap,
-  "Washing Machine": WashingMachine,
-  Refrigerator: Refrigerator,
-  Geyser: Droplets,
-  Lift: ArrowUpDown,
-};
+    WiFi: Wifi,
+    AC: Snowflake,
+    TV: Tv,
+    CCTV: Cctv,
+    Gym: Dumbbell,
+    Garden: TreePalm,
+    "Security Guard": ShieldCheck,
+    "Power Backup": Zap,
+    "Washing Machine": WashingMachine,
+    Refrigerator: Refrigerator,
+    Geyser: Droplets,
+    Lift: ArrowUpDown,
+  };
 
 
   // ✅ UUID VALIDATOR (🔥 MAIN FIX)
@@ -85,7 +86,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
         const parts = window.location.pathname.split("/").filter(Boolean);
         return parts[parts.length - 1];
       }
-    } catch (e) {}
+    } catch (e) { }
     return undefined;
   };
 
@@ -96,7 +97,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
     if (typeof value === "string") {
       const trimmed = value.trim();
       if ((trimmed.startsWith("[") && trimmed.endsWith("]")) || (trimmed.startsWith("{") && trimmed.endsWith("}"))) {
-        try { return JSON.parse(trimmed); } catch {}
+        try { return JSON.parse(trimmed); } catch { }
       }
       return value;
     }
@@ -121,6 +122,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
     };
 
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -133,14 +135,14 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
 
       // 🛡️ ABSOLUTE PROTECTION
       if (!id || !isValidUUID(id)) {
-  console.warn("Invalid property ID detected. Redirecting...", id);
+        console.warn("Invalid property ID detected. Redirecting...", id);
 
-  if (typeof window !== "undefined") {
-    window.location.href = "/search"; // ✅ or "/" or "/dashboard"
-  }
+        if (typeof window !== "undefined") {
+          window.location.href = "/search"; // ✅ or "/" or "/dashboard"
+        }
 
-  return;
-}
+        return;
+      }
 
       const { data, error } = await supabase
         .from("properties")
@@ -203,9 +205,10 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
 
     fetchProperty();
     return () => { mounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-    if (!authChecked) {
+  if (!authChecked) {
     return <div className="p-10 text-center">Checking authentication...</div>;
   }
 
@@ -213,7 +216,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
     return <div className="p-10 text-center">Loading...</div>;
   }
 
-  
+
   const reviews = [
     {
       id: 1,
@@ -282,64 +285,65 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
             <Card className="overflow-hidden">
-  <div className="relative w-full h-96 bg-gray-200 rounded-xl overflow-hidden">
+              <div className="relative w-full h-96 bg-gray-200 rounded-xl overflow-hidden">
 
-    {/* Main Image */}
-    <img
-      src={property.images[currentImageIndex] || "/placeholder.svg"}
-      alt={property.title}
-      className="w-full h-full object-cover transition-all duration-300"
-    />
+                {/* Main Image */}
+                <Image
+                  src={property.images[currentImageIndex] || "/placeholder.svg"}
+                  alt={property.title}
+                  fill
+                  className="object-cover transition-all duration-300"
+                  unoptimized
+                />
 
-    {/* Left Arrow */}
-    <button
-      onClick={() =>
-        setCurrentImageIndex((prev) =>
-          prev === 0 ? property.images.length - 1 : prev - 1
-        )
-      }
-      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
-    >
-      <ArrowLeft className="w-6 h-6" />
-    </button>
+                {/* Left Arrow */}
+                <button
+                  onClick={() =>
+                    setCurrentImageIndex((prev) =>
+                      prev === 0 ? property.images.length - 1 : prev - 1
+                    )
+                  }
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                </button>
 
-    {/* Right Arrow */}
-    <button
-      onClick={() =>
-        setCurrentImageIndex((prev) =>
-          prev === property.images.length - 1 ? 0 : prev + 1
-        )
-      }
-      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
-    >
-      <ArrowLeft className="w-6 h-6 rotate-180" />
-    </button>
+                {/* Right Arrow */}
+                <button
+                  onClick={() =>
+                    setCurrentImageIndex((prev) =>
+                      prev === property.images.length - 1 ? 0 : prev + 1
+                    )
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
+                >
+                  <ArrowLeft className="w-6 h-6 rotate-180" />
+                </button>
 
-    {/* Dots Indicators */}
-    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-      {property.images.map((_: any, index: number) => (
-        <button
-          key={index}
-          onClick={() => setCurrentImageIndex(index)}
-          className={`w-3 h-3 rounded-full transition ${
-            index === currentImageIndex ? "bg-white" : "bg-white/50"
-          }`}
-        />
-      ))}
-    </div>
+                {/* Dots Indicators */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                  {property.images.map((_: any, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-3 h-3 rounded-full transition ${index === currentImageIndex ? "bg-white" : "bg-white/50"
+                        }`}
+                    />
+                  ))}
+                </div>
 
-    {/* Verified Badge */}
-    <Badge className="absolute top-4 left-4 bg-green-600">
-      <CheckCircle className="w-3 h-3 mr-1" />
-      Verified
-    </Badge>
+                {/* Verified Badge */}
+                <Badge className="absolute top-4 left-4 bg-green-600">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  Verified
+                </Badge>
 
-    {/* Featured Badge */}
-    {property.featured && (
-      <Badge className="absolute top-4 right-4 bg-orange-600">Featured</Badge>
-    )}
-  </div>
-</Card>
+                {/* Featured Badge */}
+                {property.featured && (
+                  <Badge className="absolute top-4 right-4 bg-orange-600">Featured</Badge>
+                )}
+              </div>
+            </Card>
 
 
             {/* Room Details */}
@@ -403,34 +407,34 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
                 <Separator className="my-6" />
 
                 {/* Amenities */}
-<div className="mb-6">
-  <h3 className="text-lg font-semibold mb-4">Amenities</h3>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">Amenities</h3>
 
-  <div className="grid md:grid-cols-2 gap-4">
-    {property.amenities.map((amenity: any, index: number) => {
-      const name =
-        typeof amenity === "string" ? amenity : amenity?.name;
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {property.amenities.map((amenity: any, index: number) => {
+                      const name =
+                        typeof amenity === "string" ? amenity : amenity?.name;
 
-      const description =
-        typeof amenity === "string"
-          ? "Available"
-          : amenity?.description || "Available";
+                      const description =
+                        typeof amenity === "string"
+                          ? "Available"
+                          : amenity?.description || "Available";
 
-      const Icon = amenityIcons[name] || Wifi; // ✅ REAL dynamic icon
+                      const Icon = amenityIcons[name] || Wifi; // ✅ REAL dynamic icon
 
-      return (
-        <div key={index} className="flex items-center gap-3">
-          <Icon className="w-5 h-5 text-blue-600" />
+                      return (
+                        <div key={index} className="flex items-center gap-3">
+                          <Icon className="w-5 h-5 text-blue-600" />
 
-          <div>
-            <div className="font-medium">{name}</div>
-            <div className="text-sm text-gray-500">{description}</div>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-</div>
+                          <div>
+                            <div className="font-medium">{name}</div>
+                            <div className="text-sm text-gray-500">{description}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
 
 
               </CardContent>
@@ -563,7 +567,7 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
                       </div>
                     </div>
                     <div className="bg-purple-50 p-4 rounded-lg">
-                      <h4 className="font-semibold mb-2 text-purple-800">What's Included</h4>
+                      <h4 className="font-semibold mb-2 text-purple-800">What&apos;s Included</h4>
                       <ul className="text-sm space-y-1 text-purple-700">
                         <li>• Fresh home-cooked meals</li>
                         <li>• Hygienic food preparation</li>
@@ -637,9 +641,8 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-4 h-4 ${
-                                i < review.rating ? "text-yellow-400 fill-current" : "text-gray-300"
-                              }`}
+                              className={`w-4 h-4 ${i < review.rating ? "text-yellow-400 fill-current" : "text-gray-300"
+                                }`}
                             />
                           ))}
                         </div>
@@ -657,56 +660,56 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
           <div className="space-y-6">
             {/* Contact Card */}
             <Card className="sticky top-24">
-  <CardHeader>
-    <CardTitle>Contact Owner</CardTitle>
-  </CardHeader>
+              <CardHeader>
+                <CardTitle>Contact Owner</CardTitle>
+              </CardHeader>
 
-  <CardContent className="space-y-4">
-    <div className="flex items-center gap-3">
-      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-        <span className="text-lg font-medium text-blue-600">
-          {property.owner?.name?.charAt(0) ?? "O"}
-        </span>
-      </div>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-medium text-blue-600">
+                      {property.owner?.name?.charAt(0) ?? "O"}
+                    </span>
+                  </div>
 
-      <div>
-        <div className="font-medium flex items-center gap-2">
-          {property.owner?.name ?? "Owner"}
-          {property.owner?.verified && <CheckCircle className="w-4 h-4 text-green-600" />}
-        </div>
+                  <div>
+                    <div className="font-medium flex items-center gap-2">
+                      {property.owner?.name ?? "Owner"}
+                      {property.owner?.verified && <CheckCircle className="w-4 h-4 text-green-600" />}
+                    </div>
 
-        <div className="text-sm text-gray-500">{property.owner?.joinedDate ?? "Joined recently"}</div>
-      </div>
-    </div>
+                    <div className="text-sm text-gray-500">{property.owner?.joinedDate ?? "Joined recently"}</div>
+                  </div>
+                </div>
 
-    <div className="text-sm text-gray-600">{property.owner?.responseTime ?? "Usually responds quickly"}</div>
+                <div className="text-sm text-gray-600">{property.owner?.responseTime ?? "Usually responds quickly"}</div>
 
-    <div className="space-y-2">
-      <Button className="w-full" size="lg">
-        <Phone className="w-4 h-4 mr-2" />
-        Call {property.owner?.phone ?? "Owner"}
-      </Button>
+                <div className="space-y-2">
+                  <Button className="w-full" size="lg">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call {property.owner?.phone ?? "Owner"}
+                  </Button>
 
-      <Button variant="outline" className="w-full bg-transparent" size="lg">
-        <MessageSquare className="w-4 h-4 mr-2" />
-        Send Message
-      </Button>
-    </div>
+                  <Button variant="outline" className="w-full bg-transparent" size="lg">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Send Message
+                  </Button>
+                </div>
 
-    <Separator />
+                <Separator />
 
-    <div className="space-y-2 text-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-gray-600">Available from:</span>
-        <span className="font-medium">{property.availableFrom}</span>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="text-gray-600">Last updated:</span>
-        <span className="font-medium">{property.lastUpdated}</span>
-      </div>
-    </div>
-  </CardContent>
-</Card>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Available from:</span>
+                    <span className="font-medium">{property.availableFrom}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Last updated:</span>
+                    <span className="font-medium">{property.lastUpdated}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
 
             {/* Quick Actions */}
@@ -760,21 +763,21 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
                   <span className="text-blue-600">₹{property.price * 4}</span>
                 </div>
                 {/* <Link href={`/payment?property_id=${property.id}`}> */}
-                  <Button
-  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 mt-4"
-  onClick={async () => {
-    const { data } = await supabase.auth.getUser();
+                <Button
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 mt-4"
+                  onClick={async () => {
+                    const { data } = await supabase.auth.getUser();
 
-    if (!data.user) {
-      router.push(`/login?redirect=/room/${property.id}`);
-      return;
-    }
+                    if (!data.user) {
+                      router.push(`/login?redirect=/room/${property.id}`);
+                      return;
+                    }
 
-    router.push(`/payment?property_id=${property.id}`);
-  }}
->
-  Book Now
-</Button>
+                    router.push(`/payment?property_id=${property.id}`);
+                  }}
+                >
+                  Book Now
+                </Button>
 
                 {/* </Link> */}
 

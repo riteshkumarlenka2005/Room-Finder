@@ -22,6 +22,7 @@ import {
   Camera,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 type FormDataType = {
   // Basic Info
@@ -217,29 +218,29 @@ export default function ListPropertyPage() {
 
   // Ensure user is logged-in on mount (redirect if not)
   useEffect(() => {
-  async function checkLogin() {
-    const { data } = await supabase.auth.getUser();
+    async function checkLogin() {
+      const { data } = await supabase.auth.getUser();
 
-    if (!data.user) {
-      router.replace("/login?redirect=/list-property");
-      return;
+      if (!data.user) {
+        router.replace("/login?redirect=/list-property");
+        return;
+      }
+
+      // ✅ OPTIONAL ROLE CHECK (Safer)
+      const role = data.user.user_metadata?.role;
+
+      if (role && role !== "owner") {
+        alert("❌ Only property owners can list properties.");
+        router.replace("/");
+        return;
+      }
+
+      setUser(data.user);
     }
 
-    // ✅ OPTIONAL ROLE CHECK (Safer)
-    const role = data.user.user_metadata?.role;
-
-    if (role && role !== "owner") {
-      alert("❌ Only property owners can list properties.");
-      router.replace("/");
-      return;
-    }
-
-    setUser(data.user);
-  }
-
-  checkLogin();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+    checkLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   // Generic field updater
@@ -273,104 +274,104 @@ export default function ListPropertyPage() {
 
   // Unified submit that gets session token and sends to your API
   const handleSubmit = async (e?: React.FormEvent) => {
-  if (e) e.preventDefault();
+    if (e) e.preventDefault();
 
-  // ✅ 🚨 ONLY ALLOW SUBMIT ON STEP 7
-  if (currentStep !== 7) {
-    return; // silently ignore submit attempts before final step
-  }
+    // ✅ 🚨 ONLY ALLOW SUBMIT ON STEP 7
+    if (currentStep !== 7) {
+      return; // silently ignore submit attempts before final step
+    }
 
-  // ✅ ✅ FINAL STEP VALIDATION (NOW IT WILL ONLY RUN ON STEP 7)
-  if (!formData.ownerName.trim() || !formData.phone.trim()) {
-    alert("❌ Owner Name and Phone Number are REQUIRED before submitting!");
-    return;
-  }
-
-  try {
-    // ✅ Always get fresh session before submit
-    const { data } = await supabase.auth.getSession();
-    const session = data.session;
-    const token = session?.access_token;
-
-    if (!token) {
-      alert("❌ You must be logged in to submit.");
-      router.push("/login");
+    // ✅ ✅ FINAL STEP VALIDATION (NOW IT WILL ONLY RUN ON STEP 7)
+    if (!formData.ownerName.trim() || !formData.phone.trim()) {
+      alert("❌ Owner Name and Phone Number are REQUIRED before submitting!");
       return;
     }
 
-    const payload = {
-      title: formData.title,
-      description: formData.description,
-      propertyType: formData.propertyType,
+    try {
+      // ✅ Always get fresh session before submit
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      const token = session?.access_token;
 
-      state: formData.state,
-      district: formData.district,
-      city: formData.city,
-      area: formData.area,
-      fullAddress: formData.fullAddress,
-      pincode: formData.pincode,
+      if (!token) {
+        alert("❌ You must be logged in to submit.");
+        router.push("/login");
+        return;
+      }
 
-      bhk: formData.bhk,
-      doors: formData.doors,
-      windows: formData.windows,
-      flooring: formData.flooring,
-      balcony: formData.balcony,
-      roofAccess: formData.roofAccess,
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        propertyType: formData.propertyType,
 
-      waterSystem: formData.waterSystem,
-      electricity: formData.electricity,
-      parking: formData.parking,
+        state: formData.state,
+        district: formData.district,
+        city: formData.city,
+        area: formData.area,
+        fullAddress: formData.fullAddress,
+        pincode: formData.pincode,
 
-      monthlyRent: formData.monthlyRent,
-      securityDeposit: formData.securityDeposit,
+        bhk: formData.bhk,
+        doors: formData.doors,
+        windows: formData.windows,
+        flooring: formData.flooring,
+        balcony: formData.balcony,
+        roofAccess: formData.roofAccess,
 
-      amenities: formData.amenities,
-      furniture: formData.furniture,
+        waterSystem: formData.waterSystem,
+        electricity: formData.electricity,
+        parking: formData.parking,
 
-      kitchenType: formData.kitchenType,
-      maushiAvailable: formData.maushiAvailable,
-      maushiCost: formData.maushiCost,
+        monthlyRent: formData.monthlyRent,
+        securityDeposit: formData.securityDeposit,
 
-      images: formData.images,
+        amenities: formData.amenities,
+        furniture: formData.furniture,
 
-      ownerName: formData.ownerName,
-      phone: formData.phone,
-      alternatePhone: formData.alternatePhone,
+        kitchenType: formData.kitchenType,
+        maushiAvailable: formData.maushiAvailable,
+        maushiCost: formData.maushiCost,
 
-      preferredTenants: formData.preferredTenants,
-      rules: formData.rules,
-    };
+        images: formData.images,
 
-    const res = await fetch("/api/properties", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+        ownerName: formData.ownerName,
+        phone: formData.phone,
+        alternatePhone: formData.alternatePhone,
 
-    const dataResp = await res.json();
-    console.log("✅ PROPERTY SAVED:", dataResp);
+        preferredTenants: formData.preferredTenants,
+        rules: formData.rules,
+      };
 
-    if (!res.ok || dataResp.error) {
-      alert("❌ Error: " + (dataResp.error || "Failed to save"));
-      return;
+      const res = await fetch("/api/properties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const dataResp = await res.json();
+      console.log("✅ PROPERTY SAVED:", dataResp);
+
+      if (!res.ok || dataResp.error) {
+        alert("❌ Error: " + (dataResp.error || "Failed to save"));
+        return;
+      }
+
+      alert("✅ Property Listed Successfully!");
+      setIsSubmitted(true);
+      router.push("/owner/dashboard");
+
+    } catch (err) {
+      console.error("❌ Submit Failed:", err);
+      alert("Submit failed");
     }
+  };
 
-    alert("✅ Property Listed Successfully!");
-    setIsSubmitted(true);
-    router.push("/owner/dashboard");
-
-  } catch (err) {
-    console.error("❌ Submit Failed:", err);
-    alert("Submit failed");
+  if (!user) {
+    return <div className="p-10 text-center">Checking authentication...</div>;
   }
-};
-
-if (!user) {
-  return <div className="p-10 text-center">Checking authentication...</div>;
-}
 
 
   return (
@@ -411,9 +412,8 @@ if (!user) {
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step.id <= currentStep ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-                  }`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step.id <= currentStep ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+                    }`}
                 >
                   {step.id < currentStep ? <CheckCircle className="w-4 h-4" /> : step.id}
                 </div>
@@ -701,7 +701,7 @@ if (!user) {
               </div>
             )}
 
-             {/* Step 4: Amenities */}
+            {/* Step 4: Amenities */}
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div>
@@ -761,7 +761,7 @@ if (!user) {
                     <Checkbox
                       id="maushiAvailable"
                       checked={formData.maushiAvailable}
-                      onCheckedChange={(checked:boolean) => handleInputChange("maushiAvailable", checked)}
+                      onCheckedChange={(checked: boolean) => handleInputChange("maushiAvailable", checked)}
                     />
                     <Label htmlFor="maushiAvailable">Maushi Service Available</Label>
                   </div>
@@ -891,7 +891,9 @@ if (!user) {
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {formData.images.map((img, index) => (
-                      <img key={index} src={img} className="w-full h-32 object-cover rounded-lg border" alt="Property preview" />
+                      <div key={index} className="relative w-full h-32">
+                        <Image src={img} fill className="object-cover rounded-lg border" alt="Property preview" />
+                      </div>
                     ))}
                   </div>
                 )}
@@ -961,8 +963,8 @@ if (!user) {
               </Button>
 
               {currentStep < steps.length ? (
-  <Button type="button" onClick={nextStep}>Next Step</Button>
-) : (
+                <Button type="button" onClick={nextStep}>Next Step</Button>
+              ) : (
 
                 <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">
                   <CheckCircle className="w-4 h-4 mr-2" />
