@@ -46,7 +46,7 @@ export default function HomePage() {
     if (searchLocation) query.set("location", searchLocation)
     if (roomType) query.set("type", roomType)
     if (priceRange) query.set("price", priceRange)
-    window.location.href = `/search?${query.toString()}`
+    router.push(`/search?${query.toString()}`)
   }
 
   return (
