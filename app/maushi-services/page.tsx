@@ -22,7 +22,16 @@ import {
   Heart,
   Filter,
   IndianRupee,
+  SlidersHorizontal,
 } from "lucide-react"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
 
 import Link from "next/link"
 import Image from "next/image"
@@ -232,182 +241,115 @@ export default function MaushiServicesPage() {
             Cooking की tension नहीं! Experienced aunties से मिलेगा homestyle खाना
           </p>
 
-          {/* SEARCH BAR */}
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-4">
-            <div className="flex gap-4">
+          {/* SEARCH BAR & MOBILE FILTERS */}
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-4 border border-gray-100 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search by location..."
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 h-12 bg-gray-50/50 border-gray-100 rounded-xl focus:bg-white transition-all"
                 />
               </div>
-              <Button>
-                <Search className="w-4 h-4 mr-2" />
-                Search
-              </Button>
+              <div className="flex gap-2">
+                <Button className="flex-1 sm:flex-none h-12 rounded-xl bg-purple-600 hover:bg-purple-700 px-8">
+                  <Search className="w-4 h-4 mr-2" />
+                  Search
+                </Button>
+                <div className="lg:hidden flex-1 sm:flex-none">
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" className="w-full h-12 rounded-xl border-gray-100 hover:bg-gray-50">
+                        <SlidersHorizontal className="w-4 h-4" />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl p-0 overflow-hidden">
+                      <SheetHeader className="p-6 border-b">
+                        <SheetTitle className="text-xl font-bold flex items-center gap-2">
+                          <Filter className="w-5 h-5 text-purple-600" />
+                          Filter Helpers
+                        </SheetTitle>
+                      </SheetHeader>
+                      <div className="overflow-y-auto h-full pb-32 p-6">
+                        <FilterContent
+                          selectedFilters={selectedFilters}
+                          setSelectedFilters={setSelectedFilters}
+                          priceRanges={priceRanges}
+                          experienceLevels={experienceLevels}
+                          cuisineTypes={cuisineTypes}
+                          availabilityOptions={availabilityOptions}
+                        />
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* STATS SECTION */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="text-center p-4">
-            <CardContent>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+          <Card className="text-center p-2 rounded-2xl border-gray-100 shadow-sm">
+            <CardContent className="pt-6">
               <div className="text-2xl font-bold text-purple-600">500+</div>
-              <div className="text-sm text-gray-600">Verified Helpers</div>
+              <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Verified Helpers</div>
             </CardContent>
           </Card>
-          <Card className="text-center p-4">
-            <CardContent>
+          <Card className="text-center p-2 rounded-2xl border-gray-100 shadow-sm">
+            <CardContent className="pt-6">
               <div className="text-2xl font-bold text-green-600">4.8★</div>
-              <div className="text-sm text-gray-600">Average Rating</div>
+              <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Average Rating</div>
             </CardContent>
           </Card>
-          <Card className="text-center p-4">
-            <CardContent>
+          <Card className="text-center p-2 rounded-2xl border-gray-100 shadow-sm">
+            <CardContent className="pt-6">
               <div className="text-2xl font-bold text-blue-600">2000+</div>
-              <div className="text-sm text-gray-600">Happy Students</div>
+              <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Happy Students</div>
             </CardContent>
           </Card>
-          <Card className="text-center p-4">
-            <CardContent>
+          <Card className="text-center p-2 rounded-2xl border-gray-100 shadow-sm">
+            <CardContent className="pt-6">
               <div className="text-2xl font-bold text-orange-600">₹1200+</div>
-              <div className="text-sm text-gray-600">Starting Price</div>
+              <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Starting Price</div>
             </CardContent>
           </Card>
         </div>
 
         <div className="flex gap-8">
-          {/* FILTER SIDEBAR — UNCHANGED */}
-          <div className="w-80 hidden lg:block">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Filter className="w-5 h-5" />
+          {/* FILTER SIDEBAR (Desktop) */}
+          <div className="w-80 hidden lg:block shrink-0">
+            <Card className="sticky top-24 rounded-2xl border-gray-100 shadow-sm overflow-hidden">
+              <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Filter className="w-5 h-5 text-purple-600" />
                   Filters
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="space-y-6">
-                {/* PRICE FILTER */}
-                <div>
-                  <h4 className="font-medium mb-3">Price Range (per person/month)</h4>
-                  <div className="space-y-2">
-                    {priceRanges.map((range) => (
-                      <div key={range.value} className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id={`price-${range.value}`}
-                          name="priceRange"
-                          checked={selectedFilters.priceRange === range.value}
-                          onChange={() =>
-                            setSelectedFilters((prev) => ({ ...prev, priceRange: range.value }))
-                          }
-                        />
-                        <label htmlFor={`price-${range.value}`} className="text-sm">
-                          {range.label}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* EXPERIENCE FILTER */}
-                <div>
-                  <h4 className="font-medium mb-3">Experience</h4>
-                  <div className="space-y-2">
-                    {experienceLevels.map((level) => (
-                      <div key={level} className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id={`exp-${level}`}
-                          name="experience"
-                          checked={selectedFilters.experience === level}
-                          onChange={() =>
-                            setSelectedFilters((prev) => ({ ...prev, experience: level }))
-                          }
-                        />
-                        <label htmlFor={`exp-${level}`} className="text-sm">
-                          {level}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CUISINE FILTER */}
-                <div>
-                  <h4 className="font-medium mb-3">Cuisine Specialties</h4>
-                  <div className="space-y-2">
-                    {cuisineTypes.map((cuisine) => (
-                      <div key={cuisine} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={`cuisine-${cuisine}`}
-                          checked={selectedFilters.cuisine.includes(cuisine)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedFilters((prev) => ({
-                                ...prev,
-                                cuisine: [...prev.cuisine, cuisine],
-                              }))
-                            } else {
-                              setSelectedFilters((prev) => ({
-                                ...prev,
-                                cuisine: prev.cuisine.filter((c) => c !== cuisine),
-                              }))
-                            }
-                          }}
-                        />
-                        <label htmlFor={`cuisine-${cuisine}`} className="text-sm">
-                          {cuisine}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* AVAILABILITY FILTER */}
-                <div>
-                  <h4 className="font-medium mb-3">Availability</h4>
-                  <div className="space-y-2">
-                    {availabilityOptions.map((option) => (
-                      <div key={option} className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id={`avail-${option}`}
-                          name="availability"
-                          checked={selectedFilters.availability === option}
-                          onChange={() =>
-                            setSelectedFilters((prev) => ({ ...prev, availability: option }))
-                          }
-                        />
-                        <label htmlFor={`avail-${option}`} className="text-sm">
-                          {option}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Button variant="outline" className="w-full">
-                  Clear All Filters
-                </Button>
+              <CardContent className="p-6">
+                <FilterContent
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  priceRanges={priceRanges}
+                  experienceLevels={experienceLevels}
+                  cuisineTypes={cuisineTypes}
+                  availabilityOptions={availabilityOptions}
+                />
               </CardContent>
             </Card>
           </div>
 
           {/* RESULTS SECTION */}
           <div className="flex-1">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {helpers.length} Helper Services Available
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                {helpers.length} Helper <span className="text-gray-400 font-normal">Services</span>
               </h2>
 
-              <select className="border border-gray-300 rounded-md px-3 py-2">
+              <select className="w-full sm:w-auto border border-gray-100 rounded-xl px-4 py-2 bg-white text-sm font-medium outline-none">
                 <option>Sort by: Rating</option>
                 <option>Price: Low to High</option>
                 <option>Price: High to Low</option>
@@ -655,6 +597,110 @@ export default function MaushiServicesPage() {
           </div>
         </section>
       </div>
+    </div>
+  )
+}
+
+// ----------------------------------------
+// HOISTED FILTER CONTENT COMPONENT
+// ----------------------------------------
+function FilterContent({
+  selectedFilters,
+  setSelectedFilters,
+  priceRanges,
+  experienceLevels,
+  cuisineTypes,
+  availabilityOptions
+}: any) {
+  return (
+    <div className="space-y-8">
+      {/* PRICE FILTER */}
+      <div>
+        <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Price / Month</h4>
+        <div className="space-y-3">
+          {priceRanges.map((range: any) => (
+            <label key={range.value} className="flex items-center gap-3 group cursor-pointer">
+              <input
+                type="radio"
+                name="priceRangeMob"
+                checked={selectedFilters.priceRange === range.value}
+                onChange={() =>
+                  setSelectedFilters((prev: any) => ({ ...prev, priceRange: range.value }))
+                }
+                className="w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300"
+              />
+              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors uppercase">
+                {range.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* EXPERIENCE FILTER */}
+      <div>
+        <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Experience</h4>
+        <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
+          {experienceLevels.map((level: string) => (
+            <label key={level} className="flex items-center gap-3 group cursor-pointer">
+              <input
+                type="radio"
+                name="experienceMob"
+                checked={selectedFilters.experience === level}
+                onChange={() =>
+                  setSelectedFilters((prev: any) => ({ ...prev, experience: level }))
+                }
+                className="w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300"
+              />
+              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors uppercase">
+                {level}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* CUISINE FILTER */}
+      <div>
+        <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Cuisine</h4>
+        <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
+          {cuisineTypes.map((cuisine: string) => (
+            <label key={cuisine} className="flex items-center gap-3 group cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedFilters.cuisine.includes(cuisine)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedFilters((prev: any) => ({
+                      ...prev,
+                      cuisine: [...prev.cuisine, cuisine],
+                    }))
+                  } else {
+                    setSelectedFilters((prev: any) => ({
+                      ...prev,
+                      cuisine: prev.cuisine.filter((c: any) => c !== cuisine),
+                    }))
+                  }
+                }}
+                className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500 border-gray-300"
+              />
+              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors uppercase">
+                {cuisine}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <Button
+        variant="ghost"
+        className="w-full text-purple-600 hover:text-purple-700 hover:bg-purple-50 font-bold py-6 rounded-xl border border-dashed border-purple-200"
+        onClick={() => setSelectedFilters({
+          priceRange: "", experience: "", cuisine: [], availability: ""
+        })}
+      >
+        Reset All Filters
+      </Button>
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { OwnerSidebar } from "@/components/owner/owner-sidebar"
 import { DashboardOverview } from "@/components/owner/dashboard-overview"
-import  MyProperties  from "@/components/owner/my-properties"
+import MyProperties from "@/components/owner/my-properties"
 import { BookingsManagement } from "@/components/owner/bookings-management"
 import { DomesticHelpers } from "@/components/owner/domestic-helpers"
 import { MessagesInbox } from "@/components/owner/messages-inbox"
@@ -48,7 +48,7 @@ export default function OwnerDashboard() {
 
       {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-72">
+        <SheetContent side="left" className="p-0 w-[280px] border-none">
           <OwnerSidebar
             activeTab={activeTab}
             setActiveTab={(tab) => {
@@ -62,18 +62,19 @@ export default function OwnerDashboard() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Header */}
-        <header className="sticky top-0 z-10 bg-background border-b px-4 lg:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="lg:hidden">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-              </Sheet>
-              <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-foreground">
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b px-4 lg:px-8 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden h-10 w-10 rounded-xl bg-gray-50 border border-gray-100"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="h-5 w-5 text-gray-600" />
+              </Button>
+              <div className="min-w-0">
+                <h1 className="text-lg lg:text-2xl font-black text-gray-900 truncate">
                   {activeTab === "overview" && "Dashboard Overview"}
                   {activeTab === "properties" && "My Properties"}
                   {activeTab === "bookings" && "Bookings Management"}
@@ -82,25 +83,30 @@ export default function OwnerDashboard() {
                   {activeTab === "profile" && "Profile Settings"}
                   {activeTab === "analytics" && "Analytics & Reports"}
                 </h1>
-                <p className="text-sm text-muted-foreground hidden sm:block">Welcome back, Rajesh Kumar</p>
+                <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mt-1 hidden sm:block">
+                  Manager Portal • Welcome back
+                </p>
               </div>
             </div>
 
-            {/* Updated Buttons Section */}
-            <div className="flex items-center gap-2">
-
+            {/* Desktop Quick Actions */}
+            <div className="flex items-center gap-3 shrink-0">
               <Link href="/list-property">
-                <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
-                  + Add Property
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-10 px-4 rounded-xl shadow-lg shadow-blue-100 transition-all active:scale-95">
+                  <span className="hidden sm:inline">+ Add Property</span>
+                  <span className="sm:hidden">+ Add</span>
                 </Button>
               </Link>
-
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">{renderContent()}</main>
+        <main className="flex-1 p-4 lg:p-8 overflow-auto bg-gray-50/50">
+          <div className="max-w-7xl mx-auto space-y-8">
+            {renderContent()}
+          </div>
+        </main>
       </div>
     </div>
   )

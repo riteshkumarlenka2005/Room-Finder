@@ -40,6 +40,8 @@ import {
   WashingMachine,
   Refrigerator,
   ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import Link from "next/link"
@@ -252,29 +254,32 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link href="/search" className="mr-4">
-                <Button variant="ghost" size="sm">
+              <Link href="/search" className="mr-2 sm:mr-4">
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+                <Button variant="ghost" size="sm" className="hidden md:flex">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Search
                 </Button>
               </Link>
               <Link href="/" className="flex items-center">
-                <Home className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">RoomFinder</span>
+                <div className="bg-blue-600 p-1 rounded-lg">
+                  <Home className="h-5 w-5 text-white" />
+                </div>
+                <span className="ml-2 text-lg sm:text-xl font-bold text-gray-900 hidden sm:inline-block">RoomFinder</span>
               </Link>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Share2 className="w-5 h-5 text-gray-600" />
               </Button>
-              <Button variant="outline" size="sm">
-                <Heart className="w-4 h-4 mr-2" />
-                Save
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Heart className="w-5 h-5 text-gray-600" />
               </Button>
             </div>
           </div>
@@ -286,82 +291,90 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
-            <Card className="overflow-hidden">
-              <div className="relative w-full h-96 bg-gray-200 rounded-xl overflow-hidden">
-
+            <Card className="overflow-hidden border-none shadow-none md:border md:shadow-sm rounded-none md:rounded-2xl">
+              <div className="relative w-full h-[300px] sm:h-[450px] md:h-[500px] bg-gray-100 overflow-hidden">
                 {/* Main Image */}
                 <Image
                   src={resolveImageUrl(property.images[currentImageIndex])}
                   alt={property.title}
                   fill
-                  className="object-cover transition-all duration-300"
+                  className="object-cover transition-all duration-500 ease-in-out"
+                  priority
                   unoptimized
                 />
 
-                {/* Left Arrow */}
-                <button
-                  onClick={() =>
-                    setCurrentImageIndex((prev) =>
-                      prev === 0 ? property.images.length - 1 : prev - 1
-                    )
-                  }
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
-                >
-                  <ArrowLeft className="w-6 h-6" />
-                </button>
+                {/* Navigation Arrows (Desktop Only) */}
+                <div className="hidden md:block">
+                  <button
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === 0 ? property.images.length - 1 : prev - 1
+                      )
+                    }
+                    className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-4 rounded-full shadow-lg transition-all hover:scale-110"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-gray-800" />
+                  </button>
 
-                {/* Right Arrow */}
-                <button
-                  onClick={() =>
-                    setCurrentImageIndex((prev) =>
-                      (property.images && prev === property.images.length - 1) ? 0 : prev + 1
-                    )
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow"
-                >
-                  <ArrowLeft className="w-6 h-6 rotate-180" />
-                </button>
+                  <button
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        (property.images && prev === property.images.length - 1) ? 0 : prev + 1
+                      )
+                    }
+                    className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-4 rounded-full shadow-lg transition-all hover:scale-110"
+                  >
+                    <ChevronRight className="w-6 h-6 text-gray-800" />
+                  </button>
+                </div>
+
+                {/* Image Counter Badge (Mobile/Desktop) */}
+                <div className="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-bold tracking-wider">
+                  {currentImageIndex + 1} / {property.images.length}
+                </div>
 
                 {/* Dots Indicators */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
                   {property.images && property.images.map((_: any, index: number) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition ${index === currentImageIndex ? "bg-white" : "bg-white/50"
+                      className={`h-2 rounded-full transition-all duration-300 ${index === currentImageIndex ? "w-6 bg-white" : "w-2 bg-white/50"
                         }`}
                     />
                   ))}
                 </div>
 
-                {/* Verified Badge */}
-                <Badge className="absolute top-4 left-4 bg-green-600">
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  Verified
-                </Badge>
-
-                {/* Featured Badge */}
-                {property.featured && (
-                  <Badge className="absolute top-4 right-4 bg-orange-600">Featured</Badge>
-                )}
+                {/* Status Badges */}
+                <div className="absolute top-6 left-6 flex gap-2">
+                  <Badge className="bg-green-600 hover:bg-green-700 px-3 py-1 text-xs font-bold shadow-lg uppercase tracking-wider">
+                    <CheckCircle className="w-3.5 h-3.5 mr-1.5" />
+                    Verified
+                  </Badge>
+                  {property.featured && (
+                    <Badge className="bg-blue-600 hover:bg-blue-700 px-3 py-1 text-xs font-bold shadow-lg uppercase tracking-wider">Featured</Badge>
+                  )}
+                </div>
               </div>
             </Card>
 
 
-            {/* Room Details */}
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-2xl">{property.title}</CardTitle>
-                    <div className="flex items-center text-gray-600 mt-2">
-                      <MapPin className="w-4 h-4 mr-1" />
-                      <span>{property.fullAddress}</span>
+            <Card className="rounded-2xl border-gray-100 shadow-sm overflow-hidden">
+              <CardHeader className="pb-4">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                  <div className="space-y-2">
+                    <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">{property.title}</CardTitle>
+                    <div className="flex items-center text-gray-500">
+                      <MapPin className="w-4.5 h-4.5 mr-1.5 text-blue-600" />
+                      <span className="text-sm font-medium">{property.fullAddress}</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-3xl font-bold text-blue-600">₹{property.price}</span>
-                    <span className="text-gray-500">/month</span>
+                  <div className="bg-blue-50 px-6 py-3 rounded-2xl border border-blue-100 w-full md:w-auto text-center md:text-right">
+                    <div className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-1">Monthly Rent</div>
+                    <div className="flex items-baseline justify-center md:justify-end gap-1">
+                      <span className="text-3xl font-black text-blue-700">₹{property.price}</span>
+                      <span className="text-blue-500 font-bold">/mo</span>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -785,6 +798,39 @@ export default function RoomDetailsPage({ params }: { params: { id: string } | a
 
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Floating Action Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-gray-100 p-4 z-[60] shadow-[0_-8px_30px_rgb(0,0,0,0.04)] animate-in slide-in-from-bottom-full duration-500">
+        <div className="flex items-center justify-between gap-4 max-w-7xl mx-auto">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Total Rent</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-blue-700 leading-none">₹{property.price}</span>
+              <span className="text-xs font-bold text-gray-500">/mo</span>
+            </div>
+          </div>
+          <div className="flex-1 flex gap-2">
+            <Button size="icon" variant="outline" className="h-12 w-12 rounded-xl shrink-0 border-gray-100 bg-white" asChild>
+              <a href={`tel:${property.owner?.phone ?? ""}`}>
+                <Phone className="w-5 h-5 text-gray-700" />
+              </a>
+            </Button>
+            <Button
+              className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xl shadow-blue-200"
+              onClick={async () => {
+                const { data } = await supabase.auth.getUser();
+                if (!data.user) {
+                  router.push(`/login?redirect=/room/${property.id}`);
+                  return;
+                }
+                router.push(`/payment?property_id=${property.id}`);
+              }}
+            >
+              Book Now
+            </Button>
           </div>
         </div>
       </div>

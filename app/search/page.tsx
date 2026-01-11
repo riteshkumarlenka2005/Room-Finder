@@ -26,7 +26,15 @@ import {
   Square,
   Droplets,
   Wind,
+  Filter,
 } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -271,115 +279,103 @@ export default function SearchPage() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search Bar */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="flex gap-4">
+        {/* Search Bar & Mobile Filters */}
+        <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6 mb-8 border border-gray-100">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search by location, room type, or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-12 bg-gray-50/50 border-gray-100 rounded-xl focus:bg-white transition-all"
               />
             </div>
-            <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4" />
-              Filters
-            </Button>
+
+            <div className="flex gap-2">
+              {/* Desktop Filter Toggle (syncs with Sidebar) */}
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="hidden lg:flex flex-1 md:flex-none items-center gap-2 h-12 px-6 rounded-xl border-gray-100 hover:bg-gray-50"
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                {showFilters ? "Hide Filters" : "Show Filters"}
+              </Button>
+
+              {/* Mobile Filter Sheet */}
+              <div className="lg:hidden flex-1">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" className="w-full flex items-center gap-2 h-12 rounded-xl border-gray-100 hover:bg-gray-50">
+                      <Filter className="w-4 h-4" />
+                      Filters
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl p-0 overflow-hidden">
+                    <SheetHeader className="p-6 border-b">
+                      <SheetTitle className="text-xl font-bold flex items-center gap-2">
+                        <Filter className="w-5 h-5 text-blue-600" />
+                        Refine Search
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="overflow-y-auto h-full pb-32 p-6">
+                      <FilterContent
+                        selectedFilters={selectedFilters}
+                        handleFilterChange={handleFilterChange}
+                        roomTypes={roomTypes}
+                        priceRanges={priceRanges}
+                        sharingOptions={sharingOptions}
+                        amenitiesList={amenitiesList}
+                        setSelectedFilters={setSelectedFilters}
+                      />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
+
+              <div className="flex-1 lg:flex-none">
+                <select
+                  className="w-full md:w-auto h-12 border border-gray-100 rounded-xl px-4 py-2 bg-gray-50/50 focus:bg-white text-sm font-medium outline-none transition-all"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                >
+                  <option value="relevance">Relevance</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating-high">Rating: High to Low</option>
+                  <option value="newest">Newest First</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="flex gap-8">
-          {/* Filters Sidebar */}
-          <div className={`w-80 ${showFilters ? "block" : "hidden"} lg:block`}>
-            <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
-              <h3 className="text-lg font-semibold mb-4">Filters</h3>
-
-              {/* ROOM TYPE */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Room Type</h4>
-                <div className="space-y-2">
-                  {roomTypes.map((type) => (
-                    <div key={type} className="flex items-center space-x-2">
-                      <Checkbox id={`room-${type}`} checked={selectedFilters.roomType.includes(type)}
-                        onCheckedChange={(checked) => handleFilterChange("roomType", type, checked)} />
-                      <label htmlFor={`room-${type}`} className="text-sm">{type}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* PRICE RANGE */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Price Range</h4>
-                <div className="space-y-2">
-                  {priceRanges.map((range) => (
-                    <div key={range.value} className="flex items-center space-x-2">
-                      <Checkbox id={`price-${range.value}`} checked={selectedFilters.priceRange === range.value}
-                        onCheckedChange={(checked) => handleFilterChange("priceRange", range.value, checked)} />
-                      <label htmlFor={`price-${range.value}`} className="text-sm">{range.label}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* SHARING */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Sharing</h4>
-                <div className="space-y-2">
-                  {sharingOptions.map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <Checkbox id={`sharing-${option}`} checked={selectedFilters.sharing.includes(option)}
-                        onCheckedChange={(checked) => handleFilterChange("sharing", option, checked)} />
-                      <label htmlFor={`sharing-${option}`} className="text-sm">{option}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* AMENITIES */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Amenities</h4>
-                <div className="space-y-2">
-                  {amenitiesList.map((amenity) => (
-                    <div key={amenity} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`amenity-${amenity}`}
-                        checked={selectedFilters.amenities.includes(amenity)}
-                        onCheckedChange={(checked) =>
-                          handleFilterChange("amenities", amenity, checked)
-                        }
-                      />
-                      <label htmlFor={`amenity-${amenity}`} className="text-sm">
-                        {amenity}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-
-              <Button variant="outline" className="w-full bg-transparent" onClick={() => setSelectedFilters({
-                roomType: [], priceRange: "", sharing: [], amenities: [], location: ""
-              })}>
-                Clear All Filters
-              </Button>
+          {/* Filters Sidebar (Desktop) */}
+          <aside className={cn(
+            "w-80 shrink-0 hidden lg:block transition-all duration-300",
+            showFilters ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10 pointer-events-none w-0 -mr-8"
+          )}>
+            <div className="bg-white rounded-2xl shadow-sm p-6 sticky top-24 border border-gray-100">
+              <FilterContent
+                selectedFilters={selectedFilters}
+                handleFilterChange={handleFilterChange}
+                roomTypes={roomTypes}
+                priceRanges={priceRanges}
+                sharingOptions={sharingOptions}
+                amenitiesList={amenitiesList}
+                setSelectedFilters={setSelectedFilters}
+              />
             </div>
-          </div>
+          </aside>
 
           {/* RESULTS */}
           <div className="flex-1">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">{filteredRooms.length} Rooms Found</h2>
-              <select className="border border-gray-300 rounded-md px-3 py-2" value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}>
-                <option value="relevance">Sort by: Relevance</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating-high">Rating: High to Low</option>
-                <option value="newest">Newest First</option>
-              </select>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-2">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                {filteredRooms.length} Rooms <span className="text-gray-400 font-normal">Found</span>
+              </h2>
             </div>
 
             <div className="space-y-6">
@@ -477,5 +473,112 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ----------------------------------------
+// HOISTED FILTER CONTENT COMPONENT
+// ----------------------------------------
+function FilterContent({
+  selectedFilters,
+  handleFilterChange,
+  roomTypes,
+  priceRanges,
+  sharingOptions,
+  amenitiesList,
+  setSelectedFilters,
+}: any) {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-bold text-gray-900">Filters</h3>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold h-8 px-2"
+          onClick={() => setSelectedFilters({
+            roomType: [], priceRange: "", sharing: [], amenities: [], location: ""
+          })}
+        >
+          Reset
+        </Button>
+      </div>
+
+      <div className="space-y-8">
+        {/* ROOM TYPE */}
+        <div>
+          <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Room Type</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+            {roomTypes.map((type: string) => (
+              <label key={type} className="flex items-center gap-3 group cursor-pointer">
+                <div className="relative flex items-center">
+                  <Checkbox
+                    id={`room-${type}`}
+                    checked={selectedFilters.roomType.includes(type)}
+                    onCheckedChange={(checked) => handleFilterChange("roomType", type, checked)}
+                    className="border-gray-200 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                  />
+                </div>
+                <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{type}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* PRICE RANGE */}
+        <div>
+          <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Price Range</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+            {priceRanges.map((range: any) => (
+              <label key={range.value} className="flex items-center gap-3 group cursor-pointer">
+                <Checkbox
+                  id={`price-${range.value}`}
+                  checked={selectedFilters.priceRange === range.value}
+                  onCheckedChange={(checked) => handleFilterChange("priceRange", range.value, checked)}
+                  className="rounded-full border-gray-200 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                />
+                <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{range.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* SHARING */}
+        <div>
+          <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Sharing</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+            {sharingOptions.map((option: string) => (
+              <label key={option} className="flex items-center gap-3 group cursor-pointer">
+                <Checkbox
+                  id={`sharing-${option}`}
+                  checked={selectedFilters.sharing.includes(option)}
+                  onCheckedChange={(checked) => handleFilterChange("sharing", option, checked)}
+                  className="border-gray-200 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                />
+                <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* AMENITIES */}
+        <div>
+          <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Amenities</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+            {amenitiesList.map((amenity: string) => (
+              <label key={amenity} className="flex items-center gap-3 group cursor-pointer">
+                <Checkbox
+                  id={`amenity-${amenity}`}
+                  checked={selectedFilters.amenities.includes(amenity)}
+                  onCheckedChange={(checked) => handleFilterChange("amenities", amenity, checked)}
+                  className="border-gray-200 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                />
+                <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{amenity}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
