@@ -385,7 +385,7 @@ export default function SearchPage() {
               {filteredRooms.map((room) => (
                 <Card key={room.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="md:flex">
-                    <div className="md:w-1/3 relative">
+                    <div className="md:w-1/3 relative min-h-[250px]">
                       <div className="relative w-full h-64 md:h-full">
                         <Image
                           src={room.image || "/placeholder.svg"}

@@ -195,7 +195,7 @@ export default function HomePage() {
 
                 return (
                   <Card key={roomId} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="relative">
+                    <div className="relative h-64">
                       <Image
                         src={firstImage}
                         alt=""

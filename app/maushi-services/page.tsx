@@ -448,7 +448,7 @@ export default function MaushiServicesPage() {
                 helpers.map((h) => (
                   <Card key={h.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="md:flex">
-                      <div className="md:w-1/4 relative">
+                      <div className="md:w-1/4 relative min-h-[200px]">
                         {/* IMAGE FIX — Auto-load food_images → images → profile_photo → fallback */}
                         <div className="relative w-full h-64 md:h-full">
                           <Image

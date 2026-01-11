@@ -7,7 +7,7 @@ const teamMembers = [
     name: "Ritesh Kumar Lenka",
     role: "Full Stack Developer",
     bio: "Passionate about building scalable web applications and creating seamless user experiences.",
-    avatar: "/ritesh.jpg",
+    avatar: "/Ritesh.jpg",
     initials: "RK",
     socials: {
       github: "https://github.com/riteshkumarlenka2005",
@@ -19,7 +19,7 @@ const teamMembers = [
     name: "Mayank Mishra",
     role: "Backend Developer",
     bio: "Specialized in database architecture and API development. Loves solving complex problems.",
-    avatar: "/mayank.jpg",
+    avatar: "/Mayank.jpg",
     initials: "MM",
     socials: {
       github: "https://github.com/",
@@ -31,7 +31,7 @@ const teamMembers = [
     name: "Somen Mishra",
     role: "Frontend Developer",
     bio: "Creating beautiful and responsive interfaces. Focused on user-centric design principles.",
-    avatar: "/somen.jpg",
+    avatar: "/Somen.jpg",
     initials: "SM",
     socials: {
       github: "https://github.com/",
@@ -45,7 +45,7 @@ export function TeamSection() {
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
-        
+
         {/* Heading */}
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">Meet Our Team</h2>
@@ -62,7 +62,7 @@ export function TeamSection() {
               className="group overflow-hidden border-2 transition-all hover:border-blue-500 hover:shadow-xl"
             >
               <CardContent className="p-6 pt-6">
-                
+
                 {/* Avatar */}
                 <div className="mb-4 flex justify-center">
                   <div className="relative">
