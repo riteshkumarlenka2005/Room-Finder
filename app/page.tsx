@@ -13,6 +13,12 @@ import Navbar from "@/components/navbar"
 import { useRouter } from "next/navigation";
 
 
+// Helper for pluralization
+const pluralize = (count: number, singular: string, plural?: string) => {
+  if (count === 1) return `${count} ${singular}`;
+  return `${count} ${plural || singular + 's'}`;
+};
+
 export default function HomePage() {
   const [searchLocation, setSearchLocation] = useState("")
   const [priceRange, setPriceRange] = useState("")
@@ -253,11 +259,11 @@ export default function HomePage() {
                         </div>
                         <div className="flex flex-col items-center gap-1">
                           <Square className="w-3 h-3 text-gray-400" />
-                          <span className="truncate">{room.doors || 0} Doors</span>
+                          <span className="truncate text-[8px]">{pluralize(room.doors || 0, 'Door')}</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
                           <Wind className="w-3 h-3 text-gray-400" />
-                          <span className="truncate">{room.windows || 0} Win.</span>
+                          <span className="truncate text-[8px]">{pluralize(room.windows || 0, 'Window')}</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
                           <Droplets className="w-3 h-3 text-gray-400" />

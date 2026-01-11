@@ -41,6 +41,18 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 
+// Helper for pluralization
+const pluralize = (count: number, singular: string, plural?: string) => {
+  if (count === 1) return `${count} ${singular}`;
+  return `${count} ${plural || singular + 's'}`;
+};
+
+const normalizeArray = (val: any) => {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") return val.split(",").map((s) => s.trim());
+  return [];
+};
+
 interface Filters {
   priceRange: string;
   roomType: string[];
@@ -62,6 +74,7 @@ export default function SearchPage() {
     amenities: [],
     location: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   const searchParams = useSearchParams();
 
@@ -154,6 +167,7 @@ export default function SearchPage() {
       }));
 
       setRooms(normalized);
+      setIsLoading(false);
     }
 
     load();
@@ -383,99 +397,102 @@ export default function SearchPage() {
               </h2>
             </div>
 
-            <div className="space-y-6">
-              {filteredRooms.map((room) => (
-                <Card key={room.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="md:flex">
-                    <div className="md:w-1/3 relative min-h-[250px]">
-                      <div className="relative w-full h-64 md:h-full">
-                        <Image
-                          src={room.image || "/placeholder.svg"}
-                          alt={room.title}
-                          fill
-                          className="object-cover"
-                          unoptimized
-                        />
-                      </div>
-                      <Button size="sm" variant="outline" className="absolute top-2 right-2 bg-white/90 hover:bg-white">
-                        <Heart className="w-4 h-4" />
-                      </Button>
-
-                      {room.verified && (
-                        <Badge className="absolute top-2 left-2 bg-green-600">
-                          <CheckCircle className="w-3 h-3 mr-1" /> Verified
-                        </Badge>
-                      )}
-
-                      {room.featured && (
-                        <Badge className="absolute bottom-2 left-2 bg-orange-600">Featured</Badge>
-                      )}
-                    </div>
-
-                    <CardContent className="md:w-2/3 p-6">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-xl">{room.title}</h3>
-                        <div className="text-right">
-                          <span className="text-2xl font-bold text-blue-600">₹{room.price}</span>
-                          <span className="text-gray-500">/month</span>
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                <p className="text-gray-500">Loading properties...</p>
+              </div>
+            ) : filteredRooms.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-gray-500 text-lg">No rooms found matching your criteria.</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {filteredRooms.map((room) => (
+                  <Card key={room.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="md:flex">
+                      <div className="md:w-1/3 relative min-h-[250px]">
+                        <div className="relative w-full h-64 md:h-full">
+                          <Image
+                            src={room.image || "/placeholder.svg"}
+                            alt={room.title}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
                         </div>
-                      </div>
+                        <Button size="sm" variant="outline" className="absolute top-2 right-2 bg-white/90 hover:bg-white">
+                          <Heart className="w-4 h-4" />
+                        </Button>
 
-                      <div className="flex items-center text-gray-600 mb-3">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        <span className="text-sm">{room.fullAddress}</span>
-                      </div>
-
-                      <div className="flex items-center gap-4 mb-4">
-                        <Badge variant="outline" className="flex items-center gap-1"><Home className="w-3 h-3" />{room.type}</Badge>
-                        {room.sharing && (
-                          <Badge variant="outline" className="flex items-center gap-1"><Users className="w-3 h-3" />{room.sharing}</Badge>
+                        {room.verified && (
+                          <Badge className="absolute top-2 left-2 bg-green-600">
+                            <CheckCircle className="w-3 h-3 mr-1" /> Verified
+                          </Badge>
                         )}
-                        <div className="flex items-center">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                          <span className="ml-1 text-sm font-medium">{room.rating}</span>
-                          <span className="ml-1 text-sm text-gray-500">({room.reviews})</span>
-                        </div>
+
+                        {room.featured && (
+                          <Badge className="absolute bottom-2 left-2 bg-orange-600">Featured</Badge>
+                        )}
                       </div>
 
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-4 text-[13px] bg-gray-50/50 p-3 rounded-xl">
-                        <div className="flex items-center gap-2"><Bed className="w-4 h-4 text-blue-500/70" /><span>{room.details?.bhk || "—"}</span></div>
-                        <div className="flex items-center gap-2"><Square className="w-4 h-4 text-orange-500/70" /><span>{room.details?.doors} Doors</span></div>
-                        <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-cyan-500/70" /><span>{room.details?.windows} Win.</span></div>
-                        <div className="flex items-center gap-2"><Droplets className="w-4 h-4 text-blue-400" /><span>{room.details?.waterSystem || "—"}</span></div>
-                        <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-yellow-500/70" /><span>{room.details?.electricity || "—"}</span></div>
-                        <div className="flex items-center gap-2"><Car className="w-4 h-4 text-emerald-500/70" /><span>{room.details?.parking || "—"}</span></div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {room.features?.map((feature: any, index: number) => (
-                          <Badge key={index} variant="secondary" className="text-xs">{feature}</Badge>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Users className="w-4 h-4 mr-1" />
-                          <span>{room.owner?.name}</span>
-                          {room.owner?.verified && <CheckCircle className="w-4 h-4 ml-1 text-green-600" />}
+                      <CardContent className="md:w-2/3 p-6">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-semibold text-xl">{room.title}</h3>
+                          <div className="text-right">
+                            <span className="text-2xl font-bold text-blue-600">₹{room.price}</span>
+                            <span className="text-gray-500">/month</span>
+                          </div>
                         </div>
 
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline"><Phone className="w-4 h-4 mr-1" />Call</Button>
-                          <Link href={`/room/${room.id}`}><Button size="sm">View Details</Button></Link>
+                        <div className="flex items-center text-gray-600 mb-3">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          <span className="text-sm">{room.fullAddress}</span>
                         </div>
-                      </div>
-                    </CardContent>
-                  </div>
-                </Card>
-              ))}
-            </div>
 
-            {filteredRooms.length === 0 && (
-              <div className="text-center py-12">
-                <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No rooms found</h3>
-                <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+                        <div className="flex items-center gap-4 mb-4">
+                          <Badge variant="outline" className="flex items-center gap-1"><Home className="w-3 h-3" />{room.type}</Badge>
+                          {room.sharing && (
+                            <Badge variant="outline" className="flex items-center gap-1"><Users className="w-3 h-3" />{room.sharing}</Badge>
+                          )}
+                          <div className="flex items-center">
+                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                            <span className="ml-1 text-sm font-medium">{room.rating}</span>
+                            <span className="ml-1 text-sm text-gray-500">({room.reviews})</span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-4 text-[13px] bg-gray-50/50 p-3 rounded-xl">
+                          <div className="flex items-center gap-2"><Bed className="w-4 h-4 text-blue-500/70" /><span>{room.details?.bhk || "—"}</span></div>
+                          <div className="flex items-center gap-2"><Square className="w-4 h-4 text-orange-500/70" /><span>{pluralize(room.details?.doors || 0, 'Door')}</span></div>
+                          <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-cyan-500/70" /><span>{pluralize(room.details?.windows || 0, 'Window')}</span></div>
+                          <div className="flex items-center gap-2"><Droplets className="w-4 h-4 text-blue-400" /><span>{room.details?.waterSystem || "—"}</span></div>
+                          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-yellow-500/70" /><span>{room.details?.electricity || "—"}</span></div>
+                          <div className="flex items-center gap-2"><Car className="w-4 h-4 text-emerald-500/70" /><span>{room.details?.parking || "—"}</span></div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {room.features?.map((feature: any, index: number) => (
+                            <Badge key={index} variant="secondary" className="text-xs">{feature}</Badge>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Users className="w-4 h-4 mr-1" />
+                            <span>{room.owner?.name}</span>
+                            {room.owner?.verified && <CheckCircle className="w-4 h-4 ml-1 text-green-600" />}
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline"><Phone className="w-4 h-4 mr-1" />Call</Button>
+                            <Link href={`/room/${room.id}`}><Button size="sm">View Details</Button></Link>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </div>
+                  </Card>
+                ))}
               </div>
             )}
           </div>
